@@ -1,0 +1,11 @@
+body {
+  background-color: #333;
+}
+
+#isocitysim {
+  border: 2px solid white;
+  width: 1024px;
+  margin-left: auto;
+  margin-right: auto;
+  cursor: pointer;
+}

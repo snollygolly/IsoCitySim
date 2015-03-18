@@ -17,7 +17,7 @@ function Boot() {
   xOffset = 0;
   yOffset = 0;
   //set up tile size
-  size = 66;
+  size = 71;
 
   map = {};
   map.tiles = [];

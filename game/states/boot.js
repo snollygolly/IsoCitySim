@@ -1,17 +1,37 @@
 
 'use strict';
 
-var isoGroup, water = [];
+var isoGroup = [];
 
 var game;
+var map = {};
+var cursors;
 
+var xOffset;
+var yOffset;
+
+var size;
 
 function Boot() {
+  //set up the map
+  xOffset = 0;
+  yOffset = 0;
+  //set up tile size
+  size = 66;
+
+  map = {};
+  map.tiles = [];
+  map.dimensions = {};
+  map.dimensions.cols = 15;
+  map.dimensions.rows = 10;
 }
 
 Boot.prototype = {
   preload: function() {
     game = this.game;
+    game.world.setBounds(0, 0, ((size * 2) * map.dimensions.cols), ((size * 2) * map.dimensions.rows));
+    //generate the terrain
+    map = game.terrain.generateIsland(map);
     game.time.advancedTiming = true;
     game.debug.renderShadow = false;
     game.stage.disableVisibilityChange = true;
@@ -30,35 +50,16 @@ Boot.prototype = {
     isoGroup.enableBody = true;
     isoGroup.physicsBodyType = Phaser.Plugin.Isometric.ISOARCADE;
 
-    var tileArray = [];
-    tileArray[0] = 'water';
-    tileArray[1] = 'sand';
 
-    var cols = 5;
-    var rows = 7;
-    var xOffset = 100;
-    var yOffset = 100;
-    var tiles = [
-      41,66,66,66,49,
-      10,10,10,10,10,
-      22,22,22,22,22,
-      43,43,43,43,43,
-      80,80,80,80,80,
-      81,81,81,81,81,
-      95,95,95,95,95,
-    ];
-
-    var size = 66;
 
     var i = 0;
     var tile;
-    while (i < tiles.length){
-      var x = ((i % cols) * size) + xOffset;
-      var y = (Math.floor(i / cols) * size) + yOffset;
+    while (i < map.tiles.length){
+      var x = ((i % map.dimensions.cols) * size) + xOffset;
+      var y = (Math.floor(i / map.dimensions.cols) * size) + yOffset;
       var z = 0;
-      if (tiles[i] == 71){z=6;}
       //add the tile
-      tile = game.add.isoSprite(x, y, z, 'tileset', tiles[i], isoGroup);
+      tile = game.add.isoSprite(x, y, z, 'tileset', map.tiles[i], isoGroup);
       tile.anchor.set(0.5, 1);
       tile.smoothed = false;
       tile.body.moves = false;
@@ -67,9 +68,21 @@ Boot.prototype = {
       tile.scale.y = 1;
       i++;
     }
+    cursors = game.input.keyboard.createCursorKeys();
   },
   update: function () {
-
+    if (cursors.right.isDown){
+      game.camera.x += 10;
+    }
+    if (cursors.left.isDown){
+      game.camera.x -= 10;
+    }
+    if (cursors.down.isDown){
+      game.camera.y += 10;
+    }
+    if (cursors.up.isDown){
+      game.camera.y -= 10;
+    }
   },
   render: function () {
     isoGroup.forEach(function (tile) {

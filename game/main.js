@@ -2,7 +2,9 @@
 
 //global variables
 window.onload = function () {
+  var Terrain = require('./plugins/Terrain');
   var game = new Phaser.Game(1024, 768, Phaser.AUTO, 'isocitysim', null, true, false);
+  game.terrain = new Terrain();
 
   // Game States
   game.state.add('boot', require('./states/boot'));
@@ -11,6 +13,8 @@ window.onload = function () {
   game.state.add('play', require('./states/play'));
   game.state.add('preload', require('./states/preload'));
   
+
+
 
   game.state.start('preload');
 };

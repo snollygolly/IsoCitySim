@@ -3,7 +3,9 @@
 
 //global variables
 window.onload = function () {
+  var Terrain = require('./plugins/Terrain');
   var game = new Phaser.Game(1024, 768, Phaser.AUTO, 'isocitysim', null, true, false);
+  game.terrain = new Terrain();
 
   // Game States
   game.state.add('boot', require('./states/boot'));
@@ -13,24 +15,74 @@ window.onload = function () {
   game.state.add('preload', require('./states/preload'));
   
 
+
+
   game.state.start('preload');
 };
 
-},{"./states/boot":2,"./states/gameover":3,"./states/menu":4,"./states/play":5,"./states/preload":6}],2:[function(require,module,exports){
+},{"./plugins/Terrain":2,"./states/boot":3,"./states/gameover":4,"./states/menu":5,"./states/play":6,"./states/preload":7}],2:[function(require,module,exports){
 
 'use strict';
 
-var isoGroup, water = [];
+function Terrain() {
+  console.log("terrain init");
+}
+
+Terrain.prototype = {
+  generateIsland: function(map) {
+    /*
+    grass - 67
+    water - 66
+    sand - 59
+    */
+    var totalTiles = map.dimensions.cols * map.dimensions.rows;
+    var i = 0;
+    while (i < totalTiles){
+      map.tiles[i] = 66;
+      i++;
+    }
+    return map;
+    console.log("generate island called");
+  }
+};
+
+module.exports = Terrain;
+
+},{}],3:[function(require,module,exports){
+
+'use strict';
+
+var isoGroup = [];
 
 var game;
+var map = {};
+var cursors;
 
+var xOffset;
+var yOffset;
+
+var size;
 
 function Boot() {
+  //set up the map
+  xOffset = 0;
+  yOffset = 0;
+  //set up tile size
+  size = 66;
+
+  map = {};
+  map.tiles = [];
+  map.dimensions = {};
+  map.dimensions.cols = 15;
+  map.dimensions.rows = 10;
 }
 
 Boot.prototype = {
   preload: function() {
     game = this.game;
+    game.world.setBounds(0, 0, ((size * 2) * map.dimensions.cols), ((size * 2) * map.dimensions.rows));
+    //generate the terrain
+    map = game.terrain.generateIsland(map);
     game.time.advancedTiming = true;
     game.debug.renderShadow = false;
     game.stage.disableVisibilityChange = true;
@@ -49,35 +101,16 @@ Boot.prototype = {
     isoGroup.enableBody = true;
     isoGroup.physicsBodyType = Phaser.Plugin.Isometric.ISOARCADE;
 
-    var tileArray = [];
-    tileArray[0] = 'water';
-    tileArray[1] = 'sand';
 
-    var cols = 5;
-    var rows = 7;
-    var xOffset = 100;
-    var yOffset = 100;
-    var tiles = [
-      41,66,66,66,49,
-      10,10,10,10,10,
-      22,22,22,22,22,
-      43,43,43,43,43,
-      80,80,80,80,80,
-      81,81,81,81,81,
-      95,95,95,95,95,
-    ];
-
-    var size = 66;
 
     var i = 0;
     var tile;
-    while (i < tiles.length){
-      var x = ((i % cols) * size) + xOffset;
-      var y = (Math.floor(i / cols) * size) + yOffset;
+    while (i < map.tiles.length){
+      var x = ((i % map.dimensions.cols) * size) + xOffset;
+      var y = (Math.floor(i / map.dimensions.cols) * size) + yOffset;
       var z = 0;
-      if (tiles[i] == 71){z=6;}
       //add the tile
-      tile = game.add.isoSprite(x, y, z, 'tileset', tiles[i], isoGroup);
+      tile = game.add.isoSprite(x, y, z, 'tileset', map.tiles[i], isoGroup);
       tile.anchor.set(0.5, 1);
       tile.smoothed = false;
       tile.body.moves = false;
@@ -86,9 +119,21 @@ Boot.prototype = {
       tile.scale.y = 1;
       i++;
     }
+    cursors = game.input.keyboard.createCursorKeys();
   },
   update: function () {
-
+    if (cursors.right.isDown){
+      game.camera.x += 10;
+    }
+    if (cursors.left.isDown){
+      game.camera.x -= 10;
+    }
+    if (cursors.down.isDown){
+      game.camera.y += 10;
+    }
+    if (cursors.up.isDown){
+      game.camera.y -= 10;
+    }
   },
   render: function () {
     isoGroup.forEach(function (tile) {
@@ -101,7 +146,7 @@ Boot.prototype = {
 
 module.exports = Boot;
 
-},{}],3:[function(require,module,exports){
+},{}],4:[function(require,module,exports){
 
 'use strict';
 function GameOver() {}
@@ -129,7 +174,7 @@ GameOver.prototype = {
 };
 module.exports = GameOver;
 
-},{}],4:[function(require,module,exports){
+},{}],5:[function(require,module,exports){
 
 'use strict';
 function Menu() {}
@@ -161,34 +206,22 @@ Menu.prototype = {
 
 module.exports = Menu;
 
-},{}],5:[function(require,module,exports){
+},{}],6:[function(require,module,exports){
 
   'use strict';
   function Play() {}
   Play.prototype = {
     create: function() {
-      this.game.physics.startSystem(Phaser.Physics.ARCADE);
-      this.sprite = this.game.add.sprite(this.game.width/2, this.game.height/2, 'yeoman');
-      this.sprite.inputEnabled = true;
-      
-      this.game.physics.arcade.enable(this.sprite);
-      this.sprite.body.collideWorldBounds = true;
-      this.sprite.body.bounce.setTo(1,1);
-      this.sprite.body.velocity.x = this.game.rnd.integerInRange(-500,500);
-      this.sprite.body.velocity.y = this.game.rnd.integerInRange(-500,500);
 
-      this.sprite.events.onInputDown.add(this.clickListener, this);
     },
     update: function() {
 
-    },
-    clickListener: function() {
-      this.game.state.start('gameover');
     }
   };
-  
+
   module.exports = Play;
-},{}],6:[function(require,module,exports){
+
+},{}],7:[function(require,module,exports){
 
 'use strict';
 function Preload() {

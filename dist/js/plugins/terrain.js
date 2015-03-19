@@ -6,7 +6,31 @@ function Terrain() {
 }
 
 Terrain.prototype = {
+  generateMap: function(map){
+    //generates a blank map based on dimensions
+    var i = 0;
+    map.tiles = [];
+    while (i < (map.dimensions.cols * map.dimensions.rows)){
+      map.tiles[i] = 66;
+      i++;
+    }
+    return map;
+  },
+  mergePartial: function(map, partial, index){
+    //takes a map, and a partial map, and merges the partial into the map
+    var i = 0;
+    //partial should consist of an array of arrays, one array per row
+    while (i < partial.length){
+      //remove items from the array
+      map.tiles.splice(index + (map.dimensions.cols * i), partial[i].length);
+      //remove items from the array
+      map.tiles.splice.apply(map.tiles, [index + (map.dimensions.cols * i), 0].concat(partial[i]));
+      i++;
+    }
+    return map;
+  },
   generateRect: function(width, height){
+    //generates a rectangle based on the slice provided (hardcoded atm)
     var slices = [
       [53,42,61],
       [35,59,34],

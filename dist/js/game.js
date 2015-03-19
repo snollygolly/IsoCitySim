@@ -29,7 +29,31 @@ function Terrain() {
 }
 
 Terrain.prototype = {
+  generateMap: function(map){
+    //generates a blank map based on dimensions
+    var i = 0;
+    map.tiles = [];
+    while (i < (map.dimensions.cols * map.dimensions.rows)){
+      map.tiles[i] = 66;
+      i++;
+    }
+    return map;
+  },
+  mergePartial: function(map, partial, index){
+    //takes a map, and a partial map, and merges the partial into the map
+    var i = 0;
+    //partial should consist of an array of arrays, one array per row
+    while (i < partial.length){
+      //remove items from the array
+      map.tiles.splice(index + (map.dimensions.cols * i), partial[i].length);
+      //remove items from the array
+      map.tiles.splice.apply(map.tiles, [index + (map.dimensions.cols * i), 0].concat(partial[i]));
+      i++;
+    }
+    return map;
+  },
   generateRect: function(width, height){
+    //generates a rectangle based on the slice provided (hardcoded atm)
     var slices = [
       [53,42,61],
       [35,59,34],
@@ -89,8 +113,8 @@ function Boot() {
   map = {};
   map.tiles = [];
   map.dimensions = {};
-  map.dimensions.cols = 15;
-  map.dimensions.rows = 7;
+  map.dimensions.cols = 20;
+  map.dimensions.rows = 20;
 }
 
 Boot.prototype = {
@@ -98,12 +122,10 @@ Boot.prototype = {
     game = this.game;
     game.world.setBounds(0, 0, ((size * 2) * map.dimensions.cols), ((size * 2) * map.dimensions.rows));
     //generate the terrain
-    var rect = game.terrain.generateRect(map.dimensions.cols, map.dimensions.rows);
-    var i = 0;
-    while (i < rect.length){
-      map.tiles = map.tiles.concat(rect[i]);
-      i++;
-    }
+    map = game.terrain.generateMap(map);
+    var rect = game.terrain.generateRect(5, 5);
+    map = game.terrain.mergePartial(map, rect, 5);
+    //other stuff?
     game.time.advancedTiming = true;
     game.debug.renderShadow = false;
     game.stage.disableVisibilityChange = true;

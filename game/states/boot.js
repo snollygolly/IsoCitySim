@@ -14,16 +14,16 @@ var size;
 
 function Boot() {
   //set up the map
-  xOffset = 0;
-  yOffset = 0;
+  xOffset = 100;
+  yOffset = 100;
   //set up tile size
-  size = 71;
+  size = 72;
 
   map = {};
   map.tiles = [];
   map.dimensions = {};
   map.dimensions.cols = 15;
-  map.dimensions.rows = 10;
+  map.dimensions.rows = 7;
 }
 
 Boot.prototype = {
@@ -31,7 +31,12 @@ Boot.prototype = {
     game = this.game;
     game.world.setBounds(0, 0, ((size * 2) * map.dimensions.cols), ((size * 2) * map.dimensions.rows));
     //generate the terrain
-    map = game.terrain.generateIsland(map);
+    var rect = game.terrain.generateRect(map.dimensions.cols, map.dimensions.rows);
+    var i = 0;
+    while (i < rect.length){
+      map.tiles = map.tiles.concat(rect[i]);
+      i++;
+    }
     game.time.advancedTiming = true;
     game.debug.renderShadow = false;
     game.stage.disableVisibilityChange = true;

@@ -29,33 +29,36 @@ function Terrain() {
 }
 
 Terrain.prototype = {
-  generateIsland: function(map) {
-    /*
-    grass - 67
-    water - 66
-    sand - 59
-    */
-    var totalTiles = map.dimensions.cols * map.dimensions.rows;
-    //first pass to draw water
-    var i = 0;
-    while (i < totalTiles){
-      var x = (i % map.dimensions.cols);
-      var y = Math.floor(i / map.dimensions.cols);
-      if (x == 0 || y == 0){
-        map.tiles[i] = 66;
-      }else if (x == (map.dimensions.cols - 1)){
-        map.tiles[i] = 34;
-      }else if (y == (map.dimensions.rows - 1)) {
-        map.tiles[i] = 27;
-      }else{
-        map.tiles[i] = 59;
+  generateRect: function(width, height){
+    var slices = [
+      [53,42,61],
+      [35,59,34],
+      [60,27,68]
+    ];
+    var masterRows = [];
+    //row index
+    var r = 0;
+    while (r < slices.length){
+      masterRows[r] = [];
+      masterRows[r][0] = slices[r][0];
+      var i = 1;
+      while (i < (width - 1)){
+        masterRows[r][i] = slices[r][1];
+        i++;
       }
-      i++;
+      masterRows[r][i] = slices[r][2];
+      r++;
     }
-    //set the last tile to water
-    map.tiles[i-1] = 68;
-    return map;
-    console.log("generate island called");
+    //build out the final array
+    var rectArr = [];
+    rectArr[0] = masterRows[0];
+    var r = 1;
+    while (r < (height - 1)){
+      rectArr[r] = masterRows[1];
+      r++;
+    }
+    rectArr[r] = masterRows[2];
+    return rectArr;
   }
 };
 
@@ -78,16 +81,16 @@ var size;
 
 function Boot() {
   //set up the map
-  xOffset = 0;
-  yOffset = 0;
+  xOffset = 100;
+  yOffset = 100;
   //set up tile size
-  size = 71;
+  size = 72;
 
   map = {};
   map.tiles = [];
   map.dimensions = {};
   map.dimensions.cols = 15;
-  map.dimensions.rows = 10;
+  map.dimensions.rows = 7;
 }
 
 Boot.prototype = {
@@ -95,7 +98,12 @@ Boot.prototype = {
     game = this.game;
     game.world.setBounds(0, 0, ((size * 2) * map.dimensions.cols), ((size * 2) * map.dimensions.rows));
     //generate the terrain
-    map = game.terrain.generateIsland(map);
+    var rect = game.terrain.generateRect(map.dimensions.cols, map.dimensions.rows);
+    var i = 0;
+    while (i < rect.length){
+      map.tiles = map.tiles.concat(rect[i]);
+      i++;
+    }
     game.time.advancedTiming = true;
     game.debug.renderShadow = false;
     game.stage.disableVisibilityChange = true;

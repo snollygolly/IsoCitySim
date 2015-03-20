@@ -69,7 +69,16 @@ Terrain.prototype = {
     }
     return map;
   },
-  generateRect: function(width, height, slice){
+  generateRect: function(width, height, fill){
+    var r = 0;
+    var rows = [];
+    while (r < height){
+      rows[r] = this.makeFilledArray(fill, width);
+      r++;
+    }
+    return rows;
+  },
+  generateSliceRect: function(width, height, slice){
     //generates a rectangle based on the slice provided (hardcoded atm)
     var masterRows = [];
     var slices = this.slices[slice];
@@ -96,6 +105,13 @@ Terrain.prototype = {
     }
     rectArr[r] = masterRows[2];
     return rectArr;
+  },
+  makeFilledArray: function(fill, length){
+    var array = [];
+    for (var i = 0; i < length; i++) {
+        array[i] = fill;
+    }
+    return array;
   }
 };
 
@@ -136,8 +152,10 @@ Boot.prototype = {
     game.world.setBounds(0, 0, ((size * 2) * map.dimensions.cols), ((size * 2) * map.dimensions.rows));
     //generate the terrain
     map = game.terrain.generateMap(map, 67);
-    var rect = game.terrain.generateRect(5, 5, "paved");
+
+    var rect = game.terrain.generateSliceRect(5, 5, "paved");
     map = game.terrain.mergePartial(map, rect, 5);
+
     //other stuff?
     game.time.advancedTiming = true;
     game.debug.renderShadow = false;
@@ -189,6 +207,7 @@ Boot.prototype = {
     }
     if (cursors.up.isDown){
       game.camera.y -= 10;
+      console.log(game.scale);
     }
   },
   render: function () {

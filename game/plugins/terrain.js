@@ -46,7 +46,16 @@ Terrain.prototype = {
     }
     return map;
   },
-  generateRect: function(width, height, slice){
+  generateRect: function(width, height, fill){
+    var r = 0;
+    var rows = [];
+    while (r < height){
+      rows[r] = this.makeFilledArray(fill, width);
+      r++;
+    }
+    return rows;
+  },
+  generateSliceRect: function(width, height, slice){
     //generates a rectangle based on the slice provided (hardcoded atm)
     var masterRows = [];
     var slices = this.slices[slice];
@@ -73,6 +82,13 @@ Terrain.prototype = {
     }
     rectArr[r] = masterRows[2];
     return rectArr;
+  },
+  makeFilledArray: function(fill, length){
+    var array = [];
+    for (var i = 0; i < length; i++) {
+        array[i] = fill;
+    }
+    return array;
   }
 };
 

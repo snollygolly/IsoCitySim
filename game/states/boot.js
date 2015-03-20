@@ -32,8 +32,10 @@ Boot.prototype = {
     game.world.setBounds(0, 0, ((size * 2) * map.dimensions.cols), ((size * 2) * map.dimensions.rows));
     //generate the terrain
     map = game.terrain.generateMap(map, 67);
-    var rect = game.terrain.generateRect(5, 5, "paved");
+
+    var rect = game.terrain.generateSliceRect(5, 5, "paved");
     map = game.terrain.mergePartial(map, rect, 5);
+
     //other stuff?
     game.time.advancedTiming = true;
     game.debug.renderShadow = false;
@@ -85,6 +87,7 @@ Boot.prototype = {
     }
     if (cursors.up.isDown){
       game.camera.y -= 10;
+      console.log(game.scale);
     }
   },
   render: function () {

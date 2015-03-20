@@ -31,8 +31,8 @@ Boot.prototype = {
     game = this.game;
     game.world.setBounds(0, 0, ((size * 2) * map.dimensions.cols), ((size * 2) * map.dimensions.rows));
     //generate the terrain
-    map = game.terrain.generateMap(map);
-    var rect = game.terrain.generateRect(5, 5, "hill");
+    map = game.terrain.generateMap(map, 67);
+    var rect = game.terrain.generateRect(5, 5, "paved");
     map = game.terrain.mergePartial(map, rect, 5);
     //other stuff?
     game.time.advancedTiming = true;

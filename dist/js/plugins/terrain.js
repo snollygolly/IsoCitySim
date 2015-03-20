@@ -16,14 +16,19 @@ Terrain.prototype = {
       [0,10,0],
       [16,67,15],
       [0,22,0]
+    ],
+    paved:[
+      [114,80,119],
+      [87,81,88],
+      [118,95,122]
     ]
   },
-  generateMap: function(map){
+  generateMap: function(map, fill){
     //generates a blank map based on dimensions
     var i = 0;
     map.tiles = [];
     while (i < (map.dimensions.cols * map.dimensions.rows)){
-      map.tiles[i] = 66;
+      map.tiles[i] = fill;
       i++;
     }
     return map;

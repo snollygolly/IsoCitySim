@@ -39,14 +39,19 @@ Terrain.prototype = {
       [0,10,0],
       [16,67,15],
       [0,22,0]
+    ],
+    paved:[
+      [114,80,119],
+      [87,81,88],
+      [118,95,122]
     ]
   },
-  generateMap: function(map){
+  generateMap: function(map, fill){
     //generates a blank map based on dimensions
     var i = 0;
     map.tiles = [];
     while (i < (map.dimensions.cols * map.dimensions.rows)){
-      map.tiles[i] = 66;
+      map.tiles[i] = fill;
       i++;
     }
     return map;
@@ -130,8 +135,8 @@ Boot.prototype = {
     game = this.game;
     game.world.setBounds(0, 0, ((size * 2) * map.dimensions.cols), ((size * 2) * map.dimensions.rows));
     //generate the terrain
-    map = game.terrain.generateMap(map);
-    var rect = game.terrain.generateRect(5, 5, "hill");
+    map = game.terrain.generateMap(map, 67);
+    var rect = game.terrain.generateRect(5, 5, "paved");
     map = game.terrain.mergePartial(map, rect, 5);
     //other stuff?
     game.time.advancedTiming = true;

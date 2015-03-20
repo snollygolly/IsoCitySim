@@ -29,6 +29,18 @@ function Terrain() {
 }
 
 Terrain.prototype = {
+  slices: {
+    island:[
+      [53,42,61],
+      [35,59,34],
+      [60,27,68]
+    ],
+    hill:[
+      [0,10,0],
+      [16,67,15],
+      [0,22,0]
+    ]
+  },
   generateMap: function(map){
     //generates a blank map based on dimensions
     var i = 0;
@@ -52,14 +64,10 @@ Terrain.prototype = {
     }
     return map;
   },
-  generateRect: function(width, height){
+  generateRect: function(width, height, slice){
     //generates a rectangle based on the slice provided (hardcoded atm)
-    var slices = [
-      [53,42,61],
-      [35,59,34],
-      [60,27,68]
-    ];
     var masterRows = [];
+    var slices = this.slices[slice];
     //row index
     var r = 0;
     while (r < slices.length){
@@ -123,7 +131,7 @@ Boot.prototype = {
     game.world.setBounds(0, 0, ((size * 2) * map.dimensions.cols), ((size * 2) * map.dimensions.rows));
     //generate the terrain
     map = game.terrain.generateMap(map);
-    var rect = game.terrain.generateRect(5, 5);
+    var rect = game.terrain.generateRect(5, 5, "hill");
     map = game.terrain.mergePartial(map, rect, 5);
     //other stuff?
     game.time.advancedTiming = true;

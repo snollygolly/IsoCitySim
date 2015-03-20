@@ -1,8 +1,6 @@
 
 'use strict';
 
-var isoGroup = [];
-
 var game;
 var map = {};
 var cursors;
@@ -49,22 +47,19 @@ Boot.prototype = {
     game.iso.anchor.setTo(0.5, 0.1);
   },
   create: function() {
-    isoGroup = game.add.group();
-
-    // we won't really be using IsoArcade physics, but I've enabled it anyway so the debug bodies can be seen
-    isoGroup.enableBody = true;
-    isoGroup.physicsBodyType = Phaser.Plugin.Isometric.ISOARCADE;
-
-
+    var layer = game.layerManager.addLayer("base", 0);
+    game.layerManager.layers[layer].group = game.add.group();
+    game.layerManager.layers[layer].group.enableBody = true;
+    game.layerManager.layers[layer].group.physicsBodyType = Phaser.Plugin.Isometric.ISOARCADE;
 
     var i = 0;
     var tile;
     while (i < map.tiles.length){
       var x = ((i % map.dimensions.cols) * size) + xOffset;
       var y = (Math.floor(i / map.dimensions.cols) * size) + yOffset;
-      var z = 0;
+      var z = game.layerManager.layers[layer].z;
       //add the tile
-      tile = game.add.isoSprite(x, y, z, 'tileset', map.tiles[i], isoGroup);
+      tile = game.add.isoSprite(x, y, z, 'tileset', map.tiles[i], game.layerManager.layers[layer].group);
       tile.anchor.set(0.5, 1);
       tile.smoothed = false;
       tile.body.moves = false;
@@ -76,6 +71,8 @@ Boot.prototype = {
     cursors = game.input.keyboard.createCursorKeys();
   },
   update: function () {
+    //this is how scaling is done, but this code is super rough
+    //isoGroup.scale.setTo(2,2);
     if (cursors.right.isDown){
       game.camera.x += 10;
     }
@@ -87,13 +84,14 @@ Boot.prototype = {
     }
     if (cursors.up.isDown){
       game.camera.y -= 10;
-      console.log(game.scale);
     }
   },
   render: function () {
+    /*
     isoGroup.forEach(function (tile) {
         //game.debug.body(tile, 'rgba(189, 221, 235, 0.6)', false);
     });
+    */
     game.debug.text(game.time.fps || '--', 2, 14, "#a7aebe");
     // game.debug.text(Phaser.VERSION, 2, game.world.height - 2, "#ffff00");
   }

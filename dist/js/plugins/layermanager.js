@@ -9,15 +9,17 @@ LayerManager.prototype = {
   layers: [
 
   ],
-  addLayer: function(name, z){
+  addLayer: function(name, z, group){
     //add a layer at a specific index with name and z level
     var layer = {
-      group: {},
+      group: group,
       name: name,
       tileset: "landscapeTiles",
       z: z,
       tiles: []
     };
+    layer.group.enableBody = true;
+    layer.group.physicsBodyType = Phaser.Plugin.Isometric.ISOARCADE;
     this.layers.push(layer);
     return (this.layers.length - 1);
   },

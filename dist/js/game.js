@@ -73,6 +73,8 @@ LayerManager.prototype = {
       tiles[i] = this.layers[i].tiles;
       i++;
     }
+    console.log("getalltiles: " );
+    console.log(tiles);
     return tiles;
   }
 };
@@ -208,15 +210,30 @@ Boot.prototype = {
     game = this.game;
     game.world.setBounds(0, 0, ((size * 2) * map.dimensions.cols), ((size * 2) * map.dimensions.rows));
     //generate the base layer
-    var layer = game.layerManager.addLayer("base", 0);
+    layer = game.layerManager.addLayer("base", 0);
     game.layerManager.layers[layer].group = game.add.group();
     game.layerManager.layers[layer].group.enableBody = true;
     game.layerManager.layers[layer].group.physicsBodyType = Phaser.Plugin.Isometric.ISOARCADE;
     //generate the terrain
     game.layerManager.layers[layer].tiles = game.terrain.generateMap(map, 67);
 
+    //add second test layer
+    layer = game.layerManager.addLayer("terrain", 32);
+    game.layerManager.layers[layer].tiles = game.terrain.generateMap(map, 0);
+    game.layerManager.layers[layer].group = game.add.group();
+    game.layerManager.layers[layer].group.enableBody = true;
+    game.layerManager.layers[layer].group.physicsBodyType = Phaser.Plugin.Isometric.ISOARCADE;
     var rect = game.terrain.generateSliceRect(5, 5, "hill");
     game.layerManager.layers[layer].tiles = game.terrain.mergePartial(map, game.layerManager.layers[layer].tiles, rect, 0);
+
+    //add third test layer
+    layer = game.layerManager.addLayer("more_terrain", 64);
+    game.layerManager.layers[layer].tiles = game.terrain.generateMap(map, 0);
+    game.layerManager.layers[layer].group = game.add.group();
+    game.layerManager.layers[layer].group.enableBody = true;
+    game.layerManager.layers[layer].group.physicsBodyType = Phaser.Plugin.Isometric.ISOARCADE;
+    var rect = game.terrain.generateSliceRect(3, 3, "paved");
+    game.layerManager.layers[layer].tiles = game.terrain.mergePartial(map, game.layerManager.layers[layer].tiles, rect, 6);
 
     //other stuff?
     game.time.advancedTiming = true;

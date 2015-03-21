@@ -50,6 +50,8 @@ LayerManager.prototype = {
       tiles[i] = this.layers[i].tiles;
       i++;
     }
+    console.log("getalltiles: " );
+    console.log(tiles);
     return tiles;
   }
 };

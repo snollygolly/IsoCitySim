@@ -26,25 +26,25 @@ Terrain.prototype = {
   generateMap: function(map, fill){
     //generates a blank map based on dimensions
     var i = 0;
-    map.tiles = [];
+    var tiles = [];
     while (i < (map.dimensions.cols * map.dimensions.rows)){
-      map.tiles[i] = fill;
+      tiles[i] = fill;
       i++;
     }
-    return map;
+    return tiles;
   },
-  mergePartial: function(map, partial, index){
+  mergePartial: function(map, tiles, partial, index){
     //takes a map, and a partial map, and merges the partial into the map
     var i = 0;
     //partial should consist of an array of arrays, one array per row
     while (i < partial.length){
       //remove items from the array
-      map.tiles.splice(index + (map.dimensions.cols * i), partial[i].length);
+      tiles.splice(index + (map.dimensions.cols * i), partial[i].length);
       //remove items from the array
-      map.tiles.splice.apply(map.tiles, [index + (map.dimensions.cols * i), 0].concat(partial[i]));
+      tiles.splice.apply(tiles, [index + (map.dimensions.cols * i), 0].concat(partial[i]));
       i++;
     }
-    return map;
+    return tiles;
   },
   generateRect: function(width, height, fill){
     var r = 0;

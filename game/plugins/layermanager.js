@@ -14,7 +14,9 @@ LayerManager.prototype = {
     var layer = {
       group: {},
       name: name,
-      z: z
+      tileset: "landscapeTiles",
+      z: z,
+      tiles: []
     };
     this.layers.push(layer);
     return (this.layers.length - 1);
@@ -22,7 +24,7 @@ LayerManager.prototype = {
   removeLayer: function(index){
     //remove a layer at index
     this.layers.splice(index, 1);
-    return index;
+    return this.layers;
   },
   getLayers: function(){
     //get a list of all layers
@@ -40,6 +42,15 @@ LayerManager.prototype = {
   },
   showLayer: function(index){
 
+  },
+  getAllTiles: function(){
+    var i = 0;
+    var tiles = [];
+    while (i < this.layers.length){
+      tiles[i] = this.layers[i].tiles;
+      i++;
+    }
+    return tiles;
   }
 };
 

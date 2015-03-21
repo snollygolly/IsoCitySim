@@ -20,8 +20,8 @@ function Boot() {
 
   map = {};
   map.dimensions = {};
-  map.dimensions.cols = 5;
-  map.dimensions.rows = 5;
+  map.dimensions.cols = 10;
+  map.dimensions.rows = 10;
 }
 
 Boot.prototype = {
@@ -31,19 +31,22 @@ Boot.prototype = {
     //generate the base layer
     layer = game.layerManager.addLayer("base", 0, game.add.group());
     //generate the terrain
-    game.layerManager.layers[layer].tiles = game.terrain.generateMap(map, 67);
+    game.layerManager.layers[layer].tiles = game.generate.terrain.generateMap(map, 67);
+    var rect = game.generate.terrain.generateSliceRect(5, 5, "paved");
+    game.layerManager.layers[layer].tiles = game.generate.mergePartial2D(map, game.layerManager.layers[layer].tiles, rect, 0);
+    var rect = game.generate.terrain.generateSliceRect(5, 5, "hill");
+    console.log(game.layerManager.layers[layer].tiles);
+    game.layerManager.layers[layer].tiles = game.generate.mergePartial2D(map, game.layerManager.layers[layer].tiles, rect, 1);
+    console.log(game.layerManager.layers[layer].tiles);
 
+    /*
     //add second test layer
     layer = game.layerManager.addLayer("terrain", 32, game.add.group());
-    game.layerManager.layers[layer].tiles = game.terrain.generateMap(map, 0);
-    var rect = game.terrain.generateSliceRect(5, 5, "hill");
-    game.layerManager.layers[layer].tiles = game.terrain.mergePartial(map, game.layerManager.layers[layer].tiles, rect, 0);
+    game.layerManager.layers[layer].tiles = game.generate.terrain.generateMap(map, 0);
+    var rect = game.generate.terrain.generateSliceRect(5, 5, "hill");
+    game.layerManager.layers[layer].tiles = game.generate.mergePartial2D(map, game.layerManager.layers[layer].tiles, rect, 0);
+    */
 
-    //add third test layer
-    layer = game.layerManager.addLayer("more_terrain", 64, game.add.group());
-    game.layerManager.layers[layer].tiles = game.terrain.generateMap(map, 0);
-    var rect = game.terrain.generateSliceRect(3, 3, "paved");
-    game.layerManager.layers[layer].tiles = game.terrain.mergePartial(map, game.layerManager.layers[layer].tiles, rect, 6);
 
     //other stuff?
     game.time.advancedTiming = true;

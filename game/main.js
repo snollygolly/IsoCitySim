@@ -2,10 +2,10 @@
 
 //global variables
 window.onload = function () {
-  var Terrain = require('./plugins/Terrain');
+  var Generate = require('./plugins/Generate');
   var LayerManager = require('./plugins/LayerManager');
   var game = new Phaser.Game(1024, 768, Phaser.AUTO, 'isocitysim', null, true, false);
-  game.terrain = new Terrain();
+  game.generate = new Generate();
   game.layerManager = new LayerManager();
 
   // Game States

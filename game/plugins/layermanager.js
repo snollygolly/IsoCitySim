@@ -4,7 +4,7 @@
 var game;
 
 function LayerManager(gameObj) {
-  console.log("layer init");
+  console.log("* LayerManager Init");
   game = gameObj;
 }
 
@@ -12,14 +12,10 @@ LayerManager.prototype = {
   layers: [
 
   ],
-  group: {},
+  group: null,
   addLayer: function(tileset, tiles, z){
     //add a layer at a specific index with name and z level
     //group: game.add.group(),
-    if (this.layers.length == 0){
-      this.group = game.add.group();
-      console.log("making group");
-    }
     var layer = {
       group: this.group,
       tileset: tileset,
@@ -72,19 +68,14 @@ LayerManager.prototype = {
       tiles[i] = this.layers[i].tiles;
       i++;
     }
-    console.log("getalltiles: " );
-    console.log(tiles);
     return tiles;
   },
-  setAllTiles: function(layers){
+  setAllTiles: function(tiles){
     //pass it a full layers array and it makes it happen
     var l = 0;
-    while (l < layers.length){
-      if (!this.layers[i]){
-        //this layer doesn't exist
-        this.addLayer(layers[l].tiles, layers[l].z, layers[l].group);
-      }
-      i++;
+    while (l < tiles.length){
+      this.layers[l].tiles = tiles[l];
+      l++;
     }
   }
 };

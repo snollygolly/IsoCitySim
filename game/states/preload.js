@@ -7,7 +7,7 @@ function Preload() {
 
 Preload.prototype = {
   preload: function() {
-    console.log("preload preload");
+    console.log("* Preload Init");
     this.asset = this.add.sprite(this.width/2,this.height/2, 'preloader');
     this.asset.anchor.setTo(0.5, 0.5);
 

@@ -28,35 +28,35 @@ function Boot() {
     },
     {
       tileset: "landscape",
-      z: size_z*1
+      z: 32
     },
     {
       tileset: "city",
-      z: size_z*1
+      z: 32
     },
     {
       tileset: "building",
-      z: size_z*1
+      z: 32
     },
     {
       tileset: "building",
-      z: size_z*2
+      z: 106
     },
     {
       tileset: "building",
-      z: size_z*3
+      z: 138
     },
     {
       tileset: "building",
-      z: size_z*4
+      z: size_z*7
     },
     {
       tileset: "building",
-      z: size_z*5
+      z: size_z*8
     },
     {
       tileset: "building",
-      z: size_z*6
+      z: size_z*9
     }
   ];
   map.dimensions = {
@@ -68,6 +68,9 @@ function Boot() {
 Boot.prototype = {
   preload: function() {
     game = this.game;
+    //set up groups
+    game.layerManager.group = game.add.group();
+    //generate the world
     game.world.setBounds(0, 0, ((size * 2) * map.dimensions.cols), ((size * 2) * map.dimensions.rows));
     //generate all the layers
     var l = 0;
@@ -91,6 +94,16 @@ Boot.prototype = {
     l = 2;
     var rect = game.generate.generateRect(8, 8, 66);
     game.layerManager.layers[l].tiles = game.generate.mergePartial2DSafe(map, game.layerManager.layers[l].tiles, rect, 11);
+
+    //building stuff
+    l = 3;
+    var i = 0;
+    while (i < 8){
+      var box = game.generate.generateBuilding(3);
+      game.layerManager.setAllTiles(game.generate.mergePartial3DSafe(map, game.layerManager.getAllTiles(), box, l, (i * 10) + 11));
+      i++;
+    }
+
 
     //other stuff?
     game.time.advancedTiming = true;

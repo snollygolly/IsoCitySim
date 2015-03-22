@@ -2,7 +2,7 @@
 'use strict';
 
 function Generate() {
-  console.log("generate init");
+  console.log("* Generate Init");
 }
 
 Generate.prototype = {
@@ -29,10 +29,15 @@ Generate.prototype = {
       [87,81,88],
       [118,95,122]
     ],
-    road:[
+    grass_road:[
       [123,74,126],
       [82,0,82],
       [125,74,127]
+    ],
+    city_road:[
+      [122,73,125],
+      [81,0,81],
+      [124,73,126]
     ]
   },
   generateMap: function(map, fill){
@@ -114,22 +119,14 @@ Generate.prototype = {
     }
     return tiles;
   },
-  mergePartial3D: function(map, tiles, partial, index){
+  mergePartial3D: function(map, tiles, partial, layer, index){
     //will overwrite all tiles
     //takes a map, and a partial map, and merges the partial into the map
-    //expects 3d arrays for tiles and partial: [[[0,0],[0,0]],[[0,0],[0,0]]]
+    //expects 3d arrays for tiles and partial
     var l = 0;
-    var i = 0;
-    while (l < partial[l].length){
-      i = 0;
-      //partial should consist of an array of arrays, one array per row
-      while (i < partial[l].length){
-        //remove items from the array
-        tiles[l].splice(index + (map.dimensions.cols * i), partial[l][i].length);
-        //remove items from the array
-        tiles[l].splice.apply(tiles[l], [index + (map.dimensions.cols * i), 0].concat(partial[l][i]));
-        i++;
-      }
+    while (l < partial.length){
+      tiles[(l + layer)] = this.mergePartial2D(map, tiles[(l + layer)], partial[l], index);
+      l++;
     }
     return tiles;
   },
@@ -139,6 +136,7 @@ Generate.prototype = {
     //takes a map, and a partial map, and merges the partial into the map
     var i = 0;
     //partial should consist of an array of arrays, one array per row
+    //console.log(partial, index);
     while (i < partial.length){
       var j = 0;
       while (j < partial[i].length){
@@ -152,26 +150,14 @@ Generate.prototype = {
     }
     return tiles;
   },
-  mergePartial3DSafe: function(map, tiles, partial, index){
+  mergePartial3DSafe: function(map, tiles, partial, layer, index){
     //will overwrite all tiles
     //takes a map, and a partial map, and merges the partial into the map
-    //expects 3d arrays for tiles and partial: [[[0,0],[0,0]],[[0,0],[0,0]]]
+    //expects 3d arrays for tiles and partial
     var l = 0;
-    var i = 0;
-    while (l < partial[l].length){
-      i = 0;
-      //partial should consist of an array of arrays, one array per row
-      while (i < partial[l].length){
-        var j = 0;
-        while (j < partial[l][i].length){
-          if (partial[l][i][j] != 0){
-            //there's some content here we want to merge
-            tiles[l][index + (map.dimensions.cols * i) + j] = partial[l][i][j];
-          }
-          j++;
-        }
-        i++;
-      }
+    while (l < partial.length){
+      console.log("calling merge partial 2d safe");
+      tiles[(l + layer)] = this.mergePartial2DSafe(map, tiles[(l + layer)], [partial[l]], index);
       l++;
     }
     return tiles;

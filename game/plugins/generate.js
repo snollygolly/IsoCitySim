@@ -1,8 +1,11 @@
 
 'use strict';
 
-function Generate() {
+var game;
+
+function Generate(gameObj) {
   console.log("* Generate Init");
+  game = gameObj;
 }
 
 Generate.prototype = {
@@ -13,33 +16,6 @@ Generate.prototype = {
     return returnArr;
   },
   //terrain starts here
-  slices: {
-    island:[
-      [53,42,61],
-      [35,59,34],
-      [60,27,68]
-    ],
-    hill:[
-      [0,10,0],
-      [16,67,15],
-      [0,22,0]
-    ],
-    paved:[
-      [114,80,119],
-      [87,81,88],
-      [118,95,122]
-    ],
-    grass_road:[
-      [123,74,126],
-      [82,0,82],
-      [125,74,127]
-    ],
-    city_road:[
-      [122,73,125],
-      [81,0,81],
-      [124,73,126]
-    ]
-  },
   generateMap: function(map, fill){
     //generates a blank map based on dimensions
     var i = 0;
@@ -62,7 +38,7 @@ Generate.prototype = {
   generateSliceRect: function(width, height, slice){
     //generates a rectangle based on the slice provided (hardcoded atm)
     var masterRows = [];
-    var slices = this.slices[slice];
+    var slices = game.tiles.slices[slice];
     //row index
     var r = 0;
     while (r < slices.length){
@@ -156,7 +132,6 @@ Generate.prototype = {
     //expects 3d arrays for tiles and partial
     var l = 0;
     while (l < partial.length){
-      console.log("calling merge partial 2d safe");
       tiles[(l + layer)] = this.mergePartial2DSafe(map, tiles[(l + layer)], [partial[l]], index);
       l++;
     }

@@ -98,6 +98,8 @@ Boot.prototype = {
     l = 2;
     var rect = game.generate.generateRect(8, 8, 66);
     game.layerManager.layers[l].tiles = game.generate.mergePartial2DSafe(map, game.layerManager.layers[l].tiles, rect, 11);
+    var rect = game.generate.generateSliceRect(4, 8, "city_road");
+    game.layerManager.layers[l].tiles = game.generate.mergePartial2DSafe(map, game.layerManager.layers[l].tiles, rect, 12);
 
     //building stuff
     l = 3;
@@ -105,6 +107,15 @@ Boot.prototype = {
     while (i < 8){
       var box = game.generate.generateBuilding(3);
       game.layerManager.setAllTiles(game.generate.mergePartial3DSafe(map, game.layerManager.getAllTiles(), box, l, (i * 10) + 11));
+      i++;
+    }
+
+    //building stuff
+    l = 3;
+    var i = 0;
+    while (i < 6){
+      var box = game.generate.generateBuilding(2);
+      game.layerManager.setAllTiles(game.generate.mergePartial3DSafe(map, game.layerManager.getAllTiles(), box, l, (i * 10) + 24));
       i++;
     }
 

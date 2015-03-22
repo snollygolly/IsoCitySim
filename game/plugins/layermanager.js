@@ -12,10 +12,16 @@ LayerManager.prototype = {
   layers: [
 
   ],
+  group: {},
   addLayer: function(tileset, tiles, z){
     //add a layer at a specific index with name and z level
+    //group: game.add.group(),
+    if (this.layers.length == 0){
+      this.group = game.add.group();
+      console.log("making group");
+    }
     var layer = {
-      group: game.add.group(),
+      group: this.group,
       tileset: tileset,
       z: z,
       tiles: tiles

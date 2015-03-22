@@ -22,15 +22,42 @@ function Boot() {
 
   map = {};
   map.layers = [
-    "landscape",
-    "landscape",
-    "city",
-    "building",
-    "building",
-    "building",
-    "building",
-    "building",
-    "building"
+    {
+      tileset: "landscape",
+      z: 0
+    },
+    {
+      tileset: "landscape",
+      z: size_z*1
+    },
+    {
+      tileset: "city",
+      z: size_z*1
+    },
+    {
+      tileset: "building",
+      z: size_z*1
+    },
+    {
+      tileset: "building",
+      z: size_z*2
+    },
+    {
+      tileset: "building",
+      z: size_z*3
+    },
+    {
+      tileset: "building",
+      z: size_z*4
+    },
+    {
+      tileset: "building",
+      z: size_z*5
+    },
+    {
+      tileset: "building",
+      z: size_z*6
+    }
   ];
   map.dimensions = {
     cols: 10,
@@ -42,43 +69,35 @@ Boot.prototype = {
   preload: function() {
     game = this.game;
     game.world.setBounds(0, 0, ((size * 2) * map.dimensions.cols), ((size * 2) * map.dimensions.rows));
-    //generate the base layer
+    //generate all the layers
     var l = 0;
     while (l < map.layers.length){
-      layer = game.layerManager.addLayer(map.layers[l], game.generate.generateMap(map, 0), (l * size_z));
+      layer = game.layerManager.addLayer(map.layers[l].tileset, game.generate.generateMap(map, 0), map.layers[l].z);
       l++;
     }
+    var l;
 
-    var l = 0;
-    while (l < map.layers.length){
-      var rect = game.generate.generateRect((10 - l),(10 - l),67);
-      game.layerManager.layers[l].tiles = game.generate.mergePartial2D(map, game.layerManager.layers[l].tiles, rect, 0);
-      l++;
-    }
-    
-    //layer = game.layerManager.addLayer("buildingTiles", 32, game.add.group());
-    //game.layerManager.layers[layer].tiles = game.generate.generateMap(map, 0);
-    //var cube = game.generate.generateBuilding(3);
-    //game.layerManager.layers[layer].tiles = game.generate.mergePartial3DSafe(map, game.layerManager.layers[layer].tiles, rect, 33);
+    //base grass
+    l = 0;
+    var rect = game.generate.generateRect(map.dimensions.cols, map.dimensions.rows, 83);
+    game.layerManager.layers[l].tiles = game.generate.mergePartial2D(map, game.layerManager.layers[l].tiles, rect, 0);
 
-    /*
-    //add second test layer
-    layer = game.layerManager.addLayer("terrain", 32, game.add.group());
-    game.layerManager.layers[layer].tiles = game.generate.generateMap(map, 0);
-    var rect = game.generate.generateSliceRect(5, 5, "hill");
-    game.layerManager.layers[layer].tiles = game.generate.mergePartial2D(map, game.layerManager.layers[layer].tiles, rect, 0);
-    */
+    //dirt + grass
+    l = 1;
+    var rect = game.generate.generateRect(map.dimensions.cols, map.dimensions.rows, 67);
+    game.layerManager.layers[l].tiles = game.generate.mergePartial2D(map, game.layerManager.layers[l].tiles, rect, 0);
 
+    //city stuff
+    l = 2;
+    var rect = game.generate.generateRect(8, 8, 66);
+    game.layerManager.layers[l].tiles = game.generate.mergePartial2DSafe(map, game.layerManager.layers[l].tiles, rect, 11);
 
     //other stuff?
     game.time.advancedTiming = true;
     game.debug.renderShadow = false;
     game.stage.disableVisibilityChange = true;
-
+    //set up plugins and game
     game.plugins.add(new Phaser.Plugin.Isometric(game));
-
-
-
     game.physics.startSystem(Phaser.Plugin.Isometric.ISOARCADE);
     game.iso.anchor.setTo(0.5, 0.1);
   },
@@ -129,18 +148,20 @@ Boot.prototype = {
         var y = (Math.floor(i / map.dimensions.cols) * size) + yOffset;
         var z = game.layerManager.layers[l].z;
         //add the tile
-        if (tiles[l][i] != 0){
-          tile = game.add.isoSprite(x, y, z, game.layerManager.layers[l].tileset, tiles[l][i], game.layerManager.layers[l].group);
-          tile.anchor.set(0.5, 1);
-          tile.smoothed = false;
-          tile.body.moves = false;
+        tile = game.add.isoSprite(x, y, z, game.layerManager.layers[l].tileset, tiles[l][i], game.layerManager.layers[l].group);
+        tile.anchor.set(0.5, 1);
+        tile.smoothed = false;
+        tile.body.moves = false;
 
-          tile.scale.x = 1;
-          tile.scale.y = 1;
+        tile.scale.x = 1;
+        tile.scale.y = 1;
+        if (tiles[l][i] != 0){
+          tile.alpha = 1;
         }
         i++;
       }
       l++;
+      game.iso.simpleSort(game.layerManager.group);
     }
   }
 };

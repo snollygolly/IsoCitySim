@@ -17,10 +17,14 @@ function Boot() {
   xOffset = 100;
   yOffset = 100;
   //set up tile size
-  size = 72;
+  size = 74;
   size_z = 32;
 
   map = {};
+  //yes, i know all the sizing and z coords are crazy wacky
+  //do i know why these numbers seem to work? no
+  //do they work though? yes
+  //should i figure out why they are what they are? meh
   map.layers = [
     {
       tileset: "landscape",
@@ -28,35 +32,35 @@ function Boot() {
     },
     {
       tileset: "landscape",
-      z: 32
+      z: size_z * 1
     },
     {
       tileset: "city",
-      z: 32
+      z: size_z * 1
     },
     {
       tileset: "building",
-      z: 32
+      z: size_z * 1
     },
     {
       tileset: "building",
-      z: 106
+      z: (size_z * 3) + 10
     },
     {
       tileset: "building",
-      z: 138
+      z: (size_z * 4) + 10
     },
     {
       tileset: "building",
-      z: size_z*7
+      z: (size_z * 5) + 10
     },
     {
       tileset: "building",
-      z: size_z*8
+      z: (size_z * 6) + 10
     },
     {
       tileset: "building",
-      z: size_z*9
+      z: (size_z * 7) + 10
     }
   ];
   map.dimensions = {

@@ -11,8 +11,8 @@ function Generate(gameObj) {
 Generate.prototype = {
   //buildings starts here
   generateBuilding: function(direction, low, high){
-    var colors = ["red", "brown", "grey", "white"];
-    var color = colors[0];
+    var colors = ["red", "grey"];
+    var color = colors[this.getRandomNumber(0, colors.length -1)];
     var building = {
       bottom: game.tiles.buildings[color].bottoms[direction][this.getRandomNumber(0, game.tiles.buildings[color].bottoms[direction].length -1)],
       floors: this.getRandomNumber(low, high)

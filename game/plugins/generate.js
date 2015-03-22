@@ -10,9 +10,37 @@ function Generate(gameObj) {
 
 Generate.prototype = {
   //buildings starts here
-  generateBuilding: function(floors){
-    var returnArr = this.makeFilled3DArray(16, floors);
-    returnArr[0][0] = 17;
+  generateBuilding: function(direction, low, high){
+    var colors = ["red", "brown", "grey", "white"];
+    var color = colors[0];
+    var building = {
+      bottom: game.tiles.buildings[color].bottoms[direction][this.getRandomNumber(0, game.tiles.buildings[color].bottoms[direction].length)],
+      floors: this.getRandomNumber(low, high)
+    };
+    if (this.getRandomNumber(0,1) == 1){
+      //this is going to be an "all" direction top
+      building.top = game.tiles.buildings[color].tops["all"][this.getRandomNumber(0, game.tiles.buildings[color].tops["all"].length)];
+    }else{
+      //directional top
+      if (direction == "n" || direction == "s"){
+        building.top = game.tiles.buildings[color].tops["ns"][this.getRandomNumber(0, game.tiles.buildings[color].tops["ns"].length)];
+      }else{
+        building.top = game.tiles.buildings[color].tops["ew"][this.getRandomNumber(0, game.tiles.buildings[color].tops["ew"].length)];
+      }
+    }
+    if (this.getRandomNumber(0,1) == 1){
+      //this is going to be an "all" direction roof
+      building.roof = game.tiles.buildings["all"].roofs["all"][this.getRandomNumber(0, game.tiles.buildings["all"].roofs["all"].length)];
+    }else{
+      //directional top
+      building.roof = game.tiles.buildings["all"].roofs[direction][this.getRandomNumber(0, game.tiles.buildings["all"].roofs[direction].length)];
+    }
+    return this.makeBuilding(building);
+  },
+  makeBuilding: function(building){
+    var returnArr = this.makeFilled3DArray(building.top, building.floors);
+    returnArr[0][0] = building.bottom;
+    returnArr.push([building.roof]);
     return returnArr;
   },
   //terrain starts here
@@ -136,6 +164,9 @@ Generate.prototype = {
       l++;
     }
     return tiles;
+  },
+  getRandomNumber: function(low, high){
+    return Math.floor((Math.random() * high) + low);
   }
 };
 

@@ -105,7 +105,7 @@ Boot.prototype = {
     l = 3;
     var i = 0;
     while (i < 8){
-      var box = game.generate.generateBuilding(3);
+      var box = game.generate.generateBuilding("e", 1, 3);
       game.layerManager.setAllTiles(game.generate.mergePartial3DSafe(map, game.layerManager.getAllTiles(), box, l, (i * 10) + 11));
       i++;
     }
@@ -114,7 +114,7 @@ Boot.prototype = {
     l = 3;
     var i = 0;
     while (i < 6){
-      var box = game.generate.generateBuilding(2);
+      var box = game.generate.generateBuilding("e", 1, 2);
       game.layerManager.setAllTiles(game.generate.mergePartial3DSafe(map, game.layerManager.getAllTiles(), box, l, (i * 10) + 24));
       i++;
     }

@@ -1,21 +1,24 @@
 
 'use strict';
 
-function LayerManager() {
+var game;
+
+function LayerManager(gameObj) {
   console.log("layer init");
+  game = gameObj;
 }
 
 LayerManager.prototype = {
   layers: [
 
   ],
-  addLayer: function(tileset, z, group){
+  addLayer: function(tileset, tiles, z){
     //add a layer at a specific index with name and z level
     var layer = {
-      group: group,
+      group: game.add.group(),
       tileset: tileset,
       z: z,
-      tiles: []
+      tiles: tiles
     };
     layer.group.enableBody = true;
     layer.group.physicsBodyType = Phaser.Plugin.Isometric.ISOARCADE;

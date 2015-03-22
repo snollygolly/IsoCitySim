@@ -10,6 +10,7 @@ var xOffset;
 var yOffset;
 
 var size;
+var size_z;
 
 function Boot() {
   //set up the map
@@ -17,11 +18,24 @@ function Boot() {
   yOffset = 100;
   //set up tile size
   size = 72;
+  size_z = 32;
 
   map = {};
-  map.dimensions = {};
-  map.dimensions.cols = 10;
-  map.dimensions.rows = 10;
+  map.layers = [
+    "landscape",
+    "landscape",
+    "city",
+    "building",
+    "building",
+    "building",
+    "building",
+    "building",
+    "building"
+  ];
+  map.dimensions = {
+    cols: 10,
+    rows: 10
+  };
 }
 
 Boot.prototype = {
@@ -29,11 +43,19 @@ Boot.prototype = {
     game = this.game;
     game.world.setBounds(0, 0, ((size * 2) * map.dimensions.cols), ((size * 2) * map.dimensions.rows));
     //generate the base layer
-    layer = game.layerManager.addLayer("landscape", 0, game.add.group());
-    //generate the terrain
-    game.layerManager.layers[layer].tiles = game.generate.generateMap(map, 67);
+    var l = 0;
+    while (l < map.layers.length){
+      layer = game.layerManager.addLayer(map.layers[l], game.generate.generateMap(map, 0), (l * size_z));
+      l++;
+    }
 
-
+    var l = 0;
+    while (l < map.layers.length){
+      var rect = game.generate.generateRect((10 - l),(10 - l),67);
+      game.layerManager.layers[l].tiles = game.generate.mergePartial2D(map, game.layerManager.layers[l].tiles, rect, 0);
+      l++;
+    }
+    
     //layer = game.layerManager.addLayer("buildingTiles", 32, game.add.group());
     //game.layerManager.layers[layer].tiles = game.generate.generateMap(map, 0);
     //var cube = game.generate.generateBuilding(3);

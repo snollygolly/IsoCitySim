@@ -6,7 +6,7 @@ window.onload = function () {
   var LayerManager = require('./plugins/LayerManager');
   var game = new Phaser.Game(1024, 768, Phaser.AUTO, 'isocitysim', null, true, false);
   game.generate = new Generate();
-  game.layerManager = new LayerManager();
+  game.layerManager = new LayerManager(game);
 
   // Game States
   game.state.add('boot', require('./states/boot'));

@@ -6,7 +6,7 @@ window.onload = function () {
   var LayerManager = require('./plugins/LayerManager');
   var game = new Phaser.Game(<%= gameWidth %>, <%= gameHeight %>, Phaser.AUTO, '<%= _.slugify(projectName) %>', null, true, false);
   game.generate = new Generate();
-  game.layerManager = new LayerManager();
+  game.layerManager = new LayerManager(game);
 
   // Game States
   <% _.forEach(gameStates, function(gameState) {  %>game.state.add('<%= gameState.shortName %>', require('./states/<%= gameState.shortName %>'));

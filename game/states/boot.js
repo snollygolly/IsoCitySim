@@ -61,6 +61,10 @@ function Boot() {
     {
       tileset: "building",
       z: (size_z * 7) + 10
+    },
+    {
+      tileset: "building",
+      z: (size_z * 8) + 10
     }
   ];
   map.dimensions = {
@@ -98,14 +102,14 @@ Boot.prototype = {
     l = 2;
     var rect = game.generate.generateRect(8, 8, 66);
     game.layerManager.layers[l].tiles = game.generate.mergePartial2DSafe(map, game.layerManager.layers[l].tiles, rect, 11);
-    var rect = game.generate.generateSliceRect(4, 8, "city_road");
+    var rect = game.generate.generateSliceRect(3, 8, "city_road");
     game.layerManager.layers[l].tiles = game.generate.mergePartial2DSafe(map, game.layerManager.layers[l].tiles, rect, 12);
 
     //building stuff
     l = 3;
     var i = 0;
     while (i < 8){
-      var box = game.generate.generateBuilding("e", 1, 3);
+      var box = game.generate.generateBuilding("e", 4, 6);
       game.layerManager.setAllTiles(game.generate.mergePartial3DSafe(map, game.layerManager.getAllTiles(), box, l, (i * 10) + 11));
       i++;
     }
@@ -114,8 +118,8 @@ Boot.prototype = {
     l = 3;
     var i = 0;
     while (i < 6){
-      var box = game.generate.generateBuilding("e", 1, 2);
-      game.layerManager.setAllTiles(game.generate.mergePartial3DSafe(map, game.layerManager.getAllTiles(), box, l, (i * 10) + 24));
+      var box = game.generate.generateBuilding("e", 2, 4);
+      game.layerManager.setAllTiles(game.generate.mergePartial3DSafe(map, game.layerManager.getAllTiles(), box, l, (i * 10) + 23));
       i++;
     }
 

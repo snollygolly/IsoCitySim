@@ -14,26 +14,26 @@ Generate.prototype = {
     var colors = ["red", "brown", "grey", "white"];
     var color = colors[0];
     var building = {
-      bottom: game.tiles.buildings[color].bottoms[direction][this.getRandomNumber(0, game.tiles.buildings[color].bottoms[direction].length)],
+      bottom: game.tiles.buildings[color].bottoms[direction][this.getRandomNumber(0, game.tiles.buildings[color].bottoms[direction].length -1)],
       floors: this.getRandomNumber(low, high)
     };
     if (this.getRandomNumber(0,1) == 1){
       //this is going to be an "all" direction top
-      building.top = game.tiles.buildings[color].tops["all"][this.getRandomNumber(0, game.tiles.buildings[color].tops["all"].length)];
+      building.top = game.tiles.buildings[color].tops["all"][this.getRandomNumber(0, game.tiles.buildings[color].tops["all"].length -1)];
     }else{
       //directional top
       if (direction == "n" || direction == "s"){
-        building.top = game.tiles.buildings[color].tops["ns"][this.getRandomNumber(0, game.tiles.buildings[color].tops["ns"].length)];
+        building.top = game.tiles.buildings[color].tops["ns"][this.getRandomNumber(0, game.tiles.buildings[color].tops["ns"].length -1)];
       }else{
-        building.top = game.tiles.buildings[color].tops["ew"][this.getRandomNumber(0, game.tiles.buildings[color].tops["ew"].length)];
+        building.top = game.tiles.buildings[color].tops["ew"][this.getRandomNumber(0, game.tiles.buildings[color].tops["ew"].length -1)];
       }
     }
     if (this.getRandomNumber(0,1) == 1){
       //this is going to be an "all" direction roof
-      building.roof = game.tiles.buildings["all"].roofs["all"][this.getRandomNumber(0, game.tiles.buildings["all"].roofs["all"].length)];
+      building.roof = game.tiles.buildings["all"].roofs["all"][this.getRandomNumber(0, game.tiles.buildings["all"].roofs["all"].length -1)];
     }else{
       //directional top
-      building.roof = game.tiles.buildings["all"].roofs[direction][this.getRandomNumber(0, game.tiles.buildings["all"].roofs[direction].length)];
+      building.roof = game.tiles.buildings["all"].roofs[direction][this.getRandomNumber(0, game.tiles.buildings["all"].roofs[direction].length -1)];
     }
     return this.makeBuilding(building);
   },
@@ -140,7 +140,6 @@ Generate.prototype = {
     //takes a map, and a partial map, and merges the partial into the map
     var i = 0;
     //partial should consist of an array of arrays, one array per row
-    //console.log(partial, index);
     while (i < partial.length){
       var j = 0;
       while (j < partial[i].length){
@@ -165,8 +164,8 @@ Generate.prototype = {
     }
     return tiles;
   },
-  getRandomNumber: function(low, high){
-    return Math.floor((Math.random() * high) + low);
+  getRandomNumber: function(min, max){
+    return Math.floor(Math.random() * (max - min + 1)) + min;
   }
 };
 

@@ -1,5 +1,5 @@
 <TextureAtlas imagePath="sheet.png">
-	<SubTexture name="cityTiles_000.png" x="398" y="116" width="132" height="104"/>
+	<SubTexture name="cityTiles_000.png" x="398" y="116" width="0" height="0"/>
 	<SubTexture name="cityTiles_001.png" x="794" y="737" width="132" height="101"/>
 	<SubTexture name="cityTiles_002.png" x="794" y="636" width="132" height="101"/>
 	<SubTexture name="cityTiles_003.png" x="794" y="535" width="132" height="101"/>
@@ -127,4 +127,6 @@
 	<SubTexture name="cityTiles_125.png" x="266" y="1270" width="132" height="101"/>
 	<SubTexture name="cityTiles_126.png" x="397" y="1601" width="132" height="101"/>
 	<SubTexture name="cityTiles_127.png" x="397" y="1500" width="132" height="101"/>
+	<SubTexture name="cityTiles_128.png" x="398" y="116" width="132" height="104"/>
+
 </TextureAtlas>

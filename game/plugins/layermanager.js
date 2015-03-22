@@ -9,12 +9,11 @@ LayerManager.prototype = {
   layers: [
 
   ],
-  addLayer: function(name, z, group){
+  addLayer: function(tileset, z, group){
     //add a layer at a specific index with name and z level
     var layer = {
       group: group,
-      name: name,
-      tileset: "landscapeTiles",
+      tileset: tileset,
       z: z,
       tiles: []
     };
@@ -27,6 +26,18 @@ LayerManager.prototype = {
     //remove a layer at index
     this.layers.splice(index, 1);
     return this.layers;
+  },
+  checkLayerDepth: function(index, layers){
+    //checks to see if an array can fit at this index, creates the layers needed
+    var i = index;
+    while (i < (layers.length + index)){
+      if (!this.layers[i]){
+        //this layer doesn't exist
+        return false;
+      }
+      i++;
+    }
+    return true;
   },
   getLayers: function(){
     //get a list of all layers
@@ -55,6 +66,17 @@ LayerManager.prototype = {
     console.log("getalltiles: " );
     console.log(tiles);
     return tiles;
+  },
+  setAllTiles: function(layers){
+    //pass it a full layers array and it makes it happen
+    var l = 0;
+    while (l < layers.length){
+      if (!this.layers[i]){
+        //this layer doesn't exist
+        this.addLayer(layers[l].tiles, layers[l].z, layers[l].group);
+      }
+      i++;
+    }
   }
 };
 

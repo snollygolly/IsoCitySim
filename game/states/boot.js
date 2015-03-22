@@ -29,21 +29,21 @@ Boot.prototype = {
     game = this.game;
     game.world.setBounds(0, 0, ((size * 2) * map.dimensions.cols), ((size * 2) * map.dimensions.rows));
     //generate the base layer
-    layer = game.layerManager.addLayer("base", 0, game.add.group());
+    layer = game.layerManager.addLayer("landscape", 0, game.add.group());
     //generate the terrain
-    game.layerManager.layers[layer].tiles = game.generate.terrain.generateMap(map, 67);
-    var rect = game.generate.terrain.generateSliceRect(5, 5, "paved");
-    game.layerManager.layers[layer].tiles = game.generate.mergePartial2D(map, game.layerManager.layers[layer].tiles, rect, 0);
-    var rect = game.generate.terrain.generateSliceRect(5, 5, "hill");
-    console.log(game.layerManager.layers[layer].tiles);
-    game.layerManager.layers[layer].tiles = game.generate.mergePartial2D(map, game.layerManager.layers[layer].tiles, rect, 1);
-    console.log(game.layerManager.layers[layer].tiles);
+    game.layerManager.layers[layer].tiles = game.generate.generateMap(map, 67);
+
+
+    //layer = game.layerManager.addLayer("buildingTiles", 32, game.add.group());
+    //game.layerManager.layers[layer].tiles = game.generate.generateMap(map, 0);
+    //var cube = game.generate.generateBuilding(3);
+    //game.layerManager.layers[layer].tiles = game.generate.mergePartial3DSafe(map, game.layerManager.layers[layer].tiles, rect, 33);
 
     /*
     //add second test layer
     layer = game.layerManager.addLayer("terrain", 32, game.add.group());
-    game.layerManager.layers[layer].tiles = game.generate.terrain.generateMap(map, 0);
-    var rect = game.generate.terrain.generateSliceRect(5, 5, "hill");
+    game.layerManager.layers[layer].tiles = game.generate.generateMap(map, 0);
+    var rect = game.generate.generateSliceRect(5, 5, "hill");
     game.layerManager.layers[layer].tiles = game.generate.mergePartial2D(map, game.layerManager.layers[layer].tiles, rect, 0);
     */
 
@@ -55,7 +55,7 @@ Boot.prototype = {
 
     game.plugins.add(new Phaser.Plugin.Isometric(game));
 
-    game.load.atlasXML('landscapeTiles', 'assets/landscapeTiles_sheet.png', 'assets/landscapeTiles_sheet.xml');
+
 
     game.physics.startSystem(Phaser.Plugin.Isometric.ISOARCADE);
     game.iso.anchor.setTo(0.5, 0.1);
@@ -107,13 +107,15 @@ Boot.prototype = {
         var y = (Math.floor(i / map.dimensions.cols) * size) + yOffset;
         var z = game.layerManager.layers[l].z;
         //add the tile
-        tile = game.add.isoSprite(x, y, z, 'landscapeTiles', tiles[l][i], game.layerManager.layers[l].group);
-        tile.anchor.set(0.5, 1);
-        tile.smoothed = false;
-        tile.body.moves = false;
+        if (tiles[l][i] != 0){
+          tile = game.add.isoSprite(x, y, z, game.layerManager.layers[l].tileset, tiles[l][i], game.layerManager.layers[l].group);
+          tile.anchor.set(0.5, 1);
+          tile.smoothed = false;
+          tile.body.moves = false;
 
-        tile.scale.x = 1;
-        tile.scale.y = 1;
+          tile.scale.x = 1;
+          tile.scale.y = 1;
+        }
         i++;
       }
       l++;

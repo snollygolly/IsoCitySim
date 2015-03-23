@@ -26,6 +26,50 @@
       [124,73,126]
     ]
   },
+  "roads": {
+    "122":{
+      "n": false,
+      "e": true,
+      "w": false,
+      "s": true,
+      "set": "city_plain"
+    },
+    "125":{
+      "n": false,
+      "e": false,
+      "w": true,
+      "s": true,
+      "set": "city_plain"
+    },
+    "124":{
+      "n": true,
+      "e": true,
+      "w": false,
+      "s": false,
+      "set": "city_plain"
+    },
+    "126":{
+      "n": true,
+      "e": false,
+      "w": true,
+      "s": false,
+      "set": "city_plain"
+    },
+    "73":{
+      "n": false,
+      "e": true,
+      "w": true,
+      "s": false,
+      "set": "city_plain"
+    },
+    "81":{
+      "n": true,
+      "e": false,
+      "w": false,
+      "s": true,
+      "set": "city_plain"
+    },
+  },
   "buildings": {
     "red":{
       "bottoms": {

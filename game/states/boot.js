@@ -102,8 +102,8 @@ Boot.prototype = {
     l = 2;
     var rect = game.generate.generateRect(8, 8, 66);
     game.layerManager.layers[l].tiles = game.generate.mergePartial2DSafe(map, game.layerManager.layers[l].tiles, rect, 11);
-    var rect = game.generate.generateSliceRect(3, 8, "city_road");
-    game.layerManager.layers[l].tiles = game.generate.mergePartial2DSafe(map, game.layerManager.layers[l].tiles, rect, 12);
+    //var rect = game.generate.generateSliceRect(3, 8, "city_road");
+    //game.layerManager.layers[l].tiles = game.generate.mergePartial2DSafe(map, game.layerManager.layers[l].tiles, rect, 12);
 
     //building stuff
     l = 3;
@@ -123,6 +123,12 @@ Boot.prototype = {
       i++;
     }
 
+    //road tests
+    game.layerManager.layers[2].tiles = game.generate.generateRoad(map, game.layerManager.layers[2].tiles, "city_plain", 14, "s", 8);
+    game.layerManager.layers[2].tiles = game.generate.generateRoad(map, game.layerManager.layers[2].tiles, "city_plain", 18, "s", 8);
+
+    game.layerManager.layers[2].tiles = game.generate.generateRoad(map, game.layerManager.layers[2].tiles, "city_plain", 14, "e", 5);
+    game.layerManager.layers[2].tiles = game.generate.generateRoad(map, game.layerManager.layers[2].tiles, "city_plain", 84, "e", 5);
 
     //other stuff?
     game.time.advancedTiming = true;

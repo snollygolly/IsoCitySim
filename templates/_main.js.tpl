@@ -3,9 +3,11 @@
 //global variables
 window.onload = function () {
   var game = new Phaser.Game(<%= gameWidth %>, <%= gameHeight %>, Phaser.AUTO, '<%= _.slugify(projectName) %>', null, true, false);
+  var Roads = require('./plugins/Roads');
   var Generate = require('./plugins/Generate');
   var LayerManager = require('./plugins/LayerManager');
   game.tiles = require('./tiles.json');
+  game.roads = new Roads(game);
   game.generate = new Generate(game);
   game.layerManager = new LayerManager(game);
 

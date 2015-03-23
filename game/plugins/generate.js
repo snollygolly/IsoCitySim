@@ -9,6 +9,37 @@ function Generate(gameObj) {
 }
 
 Generate.prototype = {
+  //roads start here
+  generateRoad: function(map, tiles, set, start, direction, length){
+    //generates roads from lines (2d, pass in only one array)
+    //lines should be expressed: {start: 1, direction: s, length: 5}
+    if (direction == "n" || direction == "s"){
+      var road = game.roads.getIndex("ns".split(""), "city_plain");
+    }else{
+      var road = game.roads.getIndex("ew".split(""), "city_plain");
+    }
+    tiles[start] = road;
+
+    var i = 1;
+    while (i < length){
+      switch (direction) {
+        case "n":
+          tiles[start - (map.dimensions.cols * i)] = road;
+          break;
+        case "e":
+          tiles[start + i] = road;
+          break;
+        case "w":
+          tiles[start - i] = road;
+          break;
+        case "s":
+          tiles[start + (map.dimensions.cols * i)] = road;
+          break;
+      }
+      i++;
+    }
+    return tiles;
+  },
   //buildings starts here
   generateBuilding: function(direction, low, high){
     var colors = ["red", "grey"];

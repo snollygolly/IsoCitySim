@@ -65,12 +65,19 @@ module.exports = function (grunt) {
         src: ['game/main.js'],
         dest: 'dist/js/game.js'
       }
+    },
+    'gh-pages': {
+      options: {
+        base: 'dist'
+      },
+      src: ['**']
     }
   });
 
   grunt.registerTask('build', ['buildBootstrapper', 'browserify','copy']);
   grunt.registerTask('serve', ['build', 'connect:livereload', 'watch']);
   grunt.registerTask('default', ['serve']);
+  grunt.registerTask('dev', ['buildBootstrapper', 'browserify','copy', 'build', 'gh-pages'])
   grunt.registerTask('prod', ['build', 'copy']);
 
   grunt.registerTask('buildBootstrapper', 'builds the bootstrapper file correctly', function() {

@@ -186,15 +186,14 @@ Boot.prototype = {
         var y = (Math.floor(i / map.dimensions.cols) * size) + yOffset;
         var z = game.layerManager.layers[l].z;
         //add the tile
-        tile = game.add.isoSprite(x, y, z, game.layerManager.layers[l].tileset, tiles[l][i], game.layerManager.layers[l].group);
-        tile.anchor.set(0.5, 1);
-        tile.smoothed = false;
-        tile.body.moves = false;
-
-        tile.scale.x = 1;
-        tile.scale.y = 1;
         if (tiles[l][i] != 0){
-          tile.alpha = 1;
+          tile = game.add.isoSprite(x, y, z, game.layerManager.layers[l].tileset, tiles[l][i], game.layerManager.layers[l].group);
+          tile.anchor.set(0.5, 1);
+          tile.smoothed = false;
+          tile.body.moves = false;
+
+          tile.scale.x = 1;
+          tile.scale.y = 1;
         }
         i++;
       }

@@ -27,6 +27,34 @@
     ]
   },
   "roads": {
+    "96": {
+      "n": false,
+      "e": true,
+      "w": true,
+      "s": true,
+      "set": "city_plain"
+    },
+    "88": {
+      "n": true,
+      "e": false,
+      "w": true,
+      "s": true,
+      "set": "city_plain"
+    },
+    "103": {
+      "n": true,
+      "e": true,
+      "w": true,
+      "s": false,
+      "set": "city_plain"
+    },
+    "95": {
+      "n": true,
+      "e": true,
+      "w": false,
+      "s": true,
+      "set": "city_plain"
+    },
     "122":{
       "n": false,
       "e": true,

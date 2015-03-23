@@ -130,6 +130,11 @@ Boot.prototype = {
     game.layerManager.layers[2].tiles = game.generate.generateRoad(map, game.layerManager.layers[2].tiles, "city_plain", 14, "e", 5);
     game.layerManager.layers[2].tiles = game.generate.generateRoad(map, game.layerManager.layers[2].tiles, "city_plain", 84, "e", 5);
 
+    game.layerManager.layers[2].tiles = game.generate.generateRoad(map, game.layerManager.layers[2].tiles, "city_plain", 44, "e", 5);
+
+    //test road master
+    game.layerManager.layers[2].tiles = game.roads.fixRoads(map, game.layerManager.layers[2].tiles);
+
     //other stuff?
     game.time.advancedTiming = true;
     game.debug.renderShadow = false;

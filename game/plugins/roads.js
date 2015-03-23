@@ -15,7 +15,17 @@ Roads.prototype = {
     var nsProbs = this.findNSProblems(map, tiles);
     var ewProbs = this.findEWProblems(map, tiles);
     problemTiles = this.arrayUnique(nsProbs.concat(ewProbs));
+    //tiles = this.displayProblemTiles(tiles, problemTiles);
+    //return tiles;
     tiles = this.fixProblemTiles(map, tiles, set, problemTiles);
+    return tiles;
+  },
+  displayProblemTiles: function(tiles, problems){
+    var i = 0;
+    while (i < problems.length){
+      tiles[problems[i]] = 43;
+      i++;
+    }
     return tiles;
   },
   fixProblemTiles: function(map, tiles, set, problems){
@@ -95,18 +105,15 @@ Roads.prototype = {
         if (masterTiles.indexOf(tiles[n]) === -1){
           //there's i don't recognize what's up there
           problemTiles.push(n)
-          tiles[n] = 43
         }
         if (masterTiles.indexOf(tiles[s]) === -1){
           //there's i don't recognize what's down there
           problemTiles.push(s)
-          tiles[s] = 43
         }
       }
       i++;
     }
     return problemTiles;
-    //return tiles;
   },
   findEWProblems: function(map, tiles){
     //finds problems using the e/w tile as the master tile
@@ -121,18 +128,15 @@ Roads.prototype = {
         if (masterTiles.indexOf(tiles[e]) == -1){
           //there's i don't recognize what's up there
           problemTiles.push(e)
-          tiles[e] = 43
         }
         if (masterTiles.indexOf(tiles[w]) == -1){
           //there's i don't recognize what's down there
           problemTiles.push(w)
-          tiles[w] = 43
         }
       }
       i++;
     }
     return problemTiles;
-    //return tiles;
   },
   getIndex: function(directions, set){
     //give it an array of directions and it will tell you which piece fits the bill

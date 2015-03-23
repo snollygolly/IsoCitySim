@@ -27,6 +27,13 @@
     ]
   },
   "roads": {
+    "89": {
+      "n": true,
+      "e": true,
+      "w": true,
+      "s": true,
+      "set": "city_plain"
+    },
     "96": {
       "n": false,
       "e": true,

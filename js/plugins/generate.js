@@ -9,6 +9,74 @@ function Generate(gameObj) {
 }
 
 Generate.prototype = {
+  //chunks start here
+  generateChunk: function(map, tiles){
+    //this generates a chunk (20x20 block) according to rules we've defined
+    //this is where it happens.
+    var l = 0;
+    var rect, box;
+    //this is hardcoded for now, may change, may not, buildings start on 3
+    while (l < 4){
+      switch (l){
+        case 0:
+          //dirt, fill the entire chunk with dirt
+          rect = this.generateRect(map.dimensions.cols, map.dimensions.rows, 83);
+          tiles[l] = this.mergePartial2D(map, tiles[l], rect, 0);
+          break;
+        case 1:
+          //grass on dirt
+          rect = this.generateRect(map.dimensions.cols, map.dimensions.rows, 67);
+          tiles[l] = this.mergePartial2D(map, tiles[l], rect, 0);
+          break;
+        case 2:
+          //this spawns paved areas
+          //14 because the highway takes up 3 on each edge, this will probably change
+          rect = this.generateRect(14, 14, 66);
+          //starting on 63 because that's the 4,4 after highway edges
+          tiles[l] = this.mergePartial2DSafe(map, tiles[l], rect, 63);
+          //drawing highways
+          tiles[l] = this.generateHighway(map, tiles[l], [94, 83, 0], 0, "e", 20);
+          break;
+        case 3:
+
+          break;
+      }
+      l++;
+    }
+    return tiles;
+  },
+  //highways start here
+  generateHighway: function(map, tiles, set, start, direction, length){
+    //generates highways from lines (2d, pass in only one array)
+    //lines should be expressed: {start: 1, direction: s, length: 5}
+    if (direction == "n" || direction == "s"){
+      var road = game.roads.getIndex("ns".split(""), "city_plain");
+    }else{
+      var road = game.roads.getIndex("ew".split(""), "city_plain");
+    }
+    var i = 0;
+    while (i < length){
+      switch (direction) {
+        case "n":
+          //tiles[start - (map.dimensions.cols * i)] = road;
+          break;
+        case "e":
+          var index = (start + i);
+          tiles[index] = set[0];
+          tiles[index + map.dimensions.cols] = set[1];
+          tiles[index + (map.dimensions.cols * 2)] = set[2];
+          break;
+        case "w":
+          //tiles[start - i] = road;
+          break;
+        case "s":
+          //tiles[start + (map.dimensions.cols * i)] = road;
+          break;
+      }
+      i++;
+    }
+    return tiles;
+  },
   //roads start here
   generateRoad: function(map, tiles, set, start, direction, length){
     //generates roads from lines (2d, pass in only one array)

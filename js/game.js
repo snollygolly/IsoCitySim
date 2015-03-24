@@ -35,6 +35,74 @@ function Generate(gameObj) {
 }
 
 Generate.prototype = {
+  //chunks start here
+  generateChunk: function(map, tiles){
+    //this generates a chunk (20x20 block) according to rules we've defined
+    //this is where it happens.
+    var l = 0;
+    var rect, box;
+    //this is hardcoded for now, may change, may not, buildings start on 3
+    while (l < 4){
+      switch (l){
+        case 0:
+          //dirt, fill the entire chunk with dirt
+          rect = this.generateRect(map.dimensions.cols, map.dimensions.rows, 83);
+          tiles[l] = this.mergePartial2D(map, tiles[l], rect, 0);
+          break;
+        case 1:
+          //grass on dirt
+          rect = this.generateRect(map.dimensions.cols, map.dimensions.rows, 67);
+          tiles[l] = this.mergePartial2D(map, tiles[l], rect, 0);
+          break;
+        case 2:
+          //this spawns paved areas
+          //14 because the highway takes up 3 on each edge, this will probably change
+          rect = this.generateRect(14, 14, 66);
+          //starting on 63 because that's the 4,4 after highway edges
+          tiles[l] = this.mergePartial2DSafe(map, tiles[l], rect, 63);
+          //drawing highways
+          tiles[l] = this.generateHighway(map, tiles[l], [94, 83, 0], 0, "e", 20);
+          break;
+        case 3:
+
+          break;
+      }
+      l++;
+    }
+    return tiles;
+  },
+  //highways start here
+  generateHighway: function(map, tiles, set, start, direction, length){
+    //generates highways from lines (2d, pass in only one array)
+    //lines should be expressed: {start: 1, direction: s, length: 5}
+    if (direction == "n" || direction == "s"){
+      var road = game.roads.getIndex("ns".split(""), "city_plain");
+    }else{
+      var road = game.roads.getIndex("ew".split(""), "city_plain");
+    }
+    var i = 0;
+    while (i < length){
+      switch (direction) {
+        case "n":
+          //tiles[start - (map.dimensions.cols * i)] = road;
+          break;
+        case "e":
+          var index = (start + i);
+          tiles[index] = set[0];
+          tiles[index + map.dimensions.cols] = set[1];
+          tiles[index + (map.dimensions.cols * 2)] = set[2];
+          break;
+        case "w":
+          //tiles[start - i] = road;
+          break;
+        case "s":
+          //tiles[start + (map.dimensions.cols * i)] = road;
+          break;
+      }
+      i++;
+    }
+    return tiles;
+  },
   //roads start here
   generateRoad: function(map, tiles, set, start, direction, length){
     //generates roads from lines (2d, pass in only one array)
@@ -596,8 +664,8 @@ function Boot() {
     }
   ];
   map.dimensions = {
-    cols: 10,
-    rows: 10
+    cols: 20,
+    rows: 20
   };
 }
 
@@ -614,56 +682,9 @@ Boot.prototype = {
       layer = game.layerManager.addLayer(map.layers[l].tileset, game.generate.generateMap(map, 0), map.layers[l].z);
       l++;
     }
-    var l;
 
-    //base grass
-    l = 0;
-    var rect = game.generate.generateRect(map.dimensions.cols, map.dimensions.rows, 83);
-    game.layerManager.layers[l].tiles = game.generate.mergePartial2D(map, game.layerManager.layers[l].tiles, rect, 0);
-
-    //dirt + grass
-    l = 1;
-    var rect = game.generate.generateRect(map.dimensions.cols, map.dimensions.rows, 67);
-    game.layerManager.layers[l].tiles = game.generate.mergePartial2D(map, game.layerManager.layers[l].tiles, rect, 0);
-
-    //city stuff
-    l = 2;
-    var rect = game.generate.generateRect(8, 8, 66);
-    game.layerManager.layers[l].tiles = game.generate.mergePartial2DSafe(map, game.layerManager.layers[l].tiles, rect, 11);
-    //var rect = game.generate.generateSliceRect(3, 8, "city_road");
-    //game.layerManager.layers[l].tiles = game.generate.mergePartial2DSafe(map, game.layerManager.layers[l].tiles, rect, 12);
-
-    //building stuff
-    l = 3;
-    var i = 0;
-    while (i < 8){
-      var box = game.generate.generateBuilding("e", 4, 6);
-      game.layerManager.setAllTiles(game.generate.mergePartial3DSafe(map, game.layerManager.getAllTiles(), box, l, (i * 10) + 11));
-      i++;
-    }
-
-    //building stuff
-    l = 3;
-    var i = 0;
-    while (i < 6){
-      var box = game.generate.generateBuilding("e", 1, 1);
-      game.layerManager.setAllTiles(game.generate.mergePartial3DSafe(map, game.layerManager.getAllTiles(), box, l, (i * 10) + 23));
-      i++;
-    }
-
-    //road tests
-    game.layerManager.layers[2].tiles = game.generate.generateRoad(map, game.layerManager.layers[2].tiles, "city_plain", 12, "s", 8);
-    game.layerManager.layers[2].tiles = game.generate.generateRoad(map, game.layerManager.layers[2].tiles, "city_plain", 14, "s", 8);
-    game.layerManager.layers[2].tiles = game.generate.generateRoad(map, game.layerManager.layers[2].tiles, "city_plain", 18, "s", 8);
-
-    game.layerManager.layers[2].tiles = game.generate.generateRoad(map, game.layerManager.layers[2].tiles, "city_plain", 12, "e", 7);
-    game.layerManager.layers[2].tiles = game.generate.generateRoad(map, game.layerManager.layers[2].tiles, "city_plain", 82, "e", 7);
-
-    game.layerManager.layers[2].tiles = game.generate.generateRoad(map, game.layerManager.layers[2].tiles, "city_plain", 44, "e", 5);
-    game.layerManager.layers[2].tiles = game.generate.generateRoad(map, game.layerManager.layers[2].tiles, "city_plain", 16, "s", 8);
-
-    //test road master
-    game.layerManager.layers[2].tiles = game.roads.fixRoads(map, game.layerManager.layers[2].tiles, "city_plain");
+    //build the chunk!
+    game.layerManager.setAllTiles(game.generate.generateChunk(map, game.layerManager.getAllTiles()));
 
     //other stuff?
     game.time.advancedTiming = true;

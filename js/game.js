@@ -39,6 +39,13 @@ Generate.prototype = {
   generateChunk: function(map, tiles){
     //this generates a chunk (20x20 block) according to rules we've defined
     //this is where it happens.
+    var HIGHWAY_WIDTH = game.tiles.highways.straight["n"].length + game.tiles.highways.edges["n"].length;
+    //how much land undeveloped between highway and block
+    var HIGHWAY_EASEMENT = 2;
+    var HIGHWAY_SINGLE_WIDTH = (HIGHWAY_WIDTH + HIGHWAY_EASEMENT) / 2;
+    //only half of the highway width is used on each side, that equals a full one
+    var CITY_CHUNK_SPACE = map.dimensions.cols - (HIGHWAY_WIDTH + HIGHWAY_EASEMENT);
+    var CITY_START = (map.dimensions.cols * HIGHWAY_SINGLE_WIDTH) + HIGHWAY_SINGLE_WIDTH;
     var l = 0;
     var rect, box;
     //this is hardcoded for now, may change, may not, buildings start on 3
@@ -57,11 +64,14 @@ Generate.prototype = {
         case 2:
           //this spawns paved areas
           //14 because the highway takes up 3 on each edge, this will probably change
-          rect = this.generateRect(14, 14, 66);
+          rect = this.generateRect(CITY_CHUNK_SPACE, CITY_CHUNK_SPACE, 66);
           //starting on 63 because that's the 4,4 after highway edges
-          tiles[l] = this.mergePartial2DSafe(map, tiles[l], rect, 63);
+          tiles[l] = this.mergePartial2DSafe(map, tiles[l], rect, CITY_START);
           //drawing highways
-          tiles[l] = this.generateHighway(map, tiles[l], [94, 83, 0], 0, "e", 20);
+          tiles[l] = this.generateHighway(map, tiles[l], 0, "s", ["e"], map.dimensions.rows);
+          tiles[l] = this.generateHighway(map, tiles[l], (map.dimensions.cols - (HIGHWAY_WIDTH / 2)), "s", ["w"], map.dimensions.rows);
+          tiles[l] = this.generateHighway(map, tiles[l], 0, "e", ["s"], map.dimensions.cols);
+          tiles[l] = this.generateHighway(map, tiles[l], ((map.dimensions.cols * map.dimensions.rows) - (map.dimensions.cols * (HIGHWAY_WIDTH / 2))), "e", ["n"], map.dimensions.cols);
           break;
         case 3:
 
@@ -72,32 +82,44 @@ Generate.prototype = {
     return tiles;
   },
   //highways start here
-  generateHighway: function(map, tiles, set, start, direction, length){
+  generateHighway: function(map, tiles, start, direction, half, length){
     //generates highways from lines (2d, pass in only one array)
     //lines should be expressed: {start: 1, direction: s, length: 5}
-    if (direction == "n" || direction == "s"){
-      var road = game.roads.getIndex("ns".split(""), "city_plain");
-    }else{
-      var road = game.roads.getIndex("ew".split(""), "city_plain");
-    }
+    var highway = game.tiles.highways.straight[direction];
+    var edge = game.tiles.highways.edges[direction]
+    var fullSlice = [edge[b], highway[0], highway[1], edge[b]];
     var i = 0;
+    //for border toggle
+    var b = 0;
     while (i < length){
-      switch (direction) {
-        case "n":
-          //tiles[start - (map.dimensions.cols * i)] = road;
-          break;
-        case "e":
-          var index = (start + i);
-          tiles[index] = set[0];
-          tiles[index + map.dimensions.cols] = set[1];
-          tiles[index + (map.dimensions.cols * 2)] = set[2];
-          break;
-        case "w":
-          //tiles[start - i] = road;
-          break;
-        case "s":
-          //tiles[start + (map.dimensions.cols * i)] = road;
-          break;
+      //flip flop b
+      b = ((b == 0) ? 1 : 0);
+      fullSlice = [edge[b], highway[0], highway[1], edge[b]];
+      //the the direction matching logic stuff
+      if (direction == "e" || direction == "w"){
+        //everything is same except the offset
+        var index = ((direction == "e") ? (start + i) : (start -1) );
+        var c = 0;
+        if (half.indexOf("n") != -1){
+          tiles[index + (map.dimensions.cols * c++)] = fullSlice[0];
+          tiles[index + (map.dimensions.cols * c++)] = fullSlice[1];
+        }
+        if (half.indexOf("s") != -1){
+          tiles[index + (map.dimensions.cols * c++)] = fullSlice[2];
+          tiles[index + (map.dimensions.cols * c++)] = fullSlice[3];
+        }
+      }else if (direction == "n" || direction == "s"){
+        //everything is same except the offset
+        var index = ((direction == "s") ? (start + (map.dimensions.cols * i)) : (start - (map.dimensions.cols * i)));
+        var c = 0;
+        if (half.indexOf("w") != -1){
+          tiles[index + (c++)] = fullSlice[0];
+          tiles[index + (c++)] = fullSlice[1];
+        }
+        if (half.indexOf("e") != -1){
+          tiles[index + (c++)] = fullSlice[2];
+          tiles[index + (c++)] = fullSlice[3];
+        }
       }
       i++;
     }
@@ -901,6 +923,26 @@ module.exports={
       [81,0,81],
       [124,73,126]
     ]
+  },
+  "highways": {
+    "edges": {
+      "n": [75,54],
+      "e": [83,62],
+      "w": [83,62],
+      "s": [75,54]
+    },
+    "joins": {
+      "n": 93,
+      "e": 101,
+      "w": 100,
+      "s": 107
+    },
+    "straight": {
+      "n": [86,87],
+      "e": [79,94],
+      "w": [79,94],
+      "s": [86,87]
+    }
   },
   "roads": {
     "89": {

@@ -46,6 +46,11 @@ Generate.prototype = {
           tiles[l] = this.generateHighway(map, tiles[l], (map.dimensions.cols - (HIGHWAY_WIDTH / 2)), "s", ["w"], map.dimensions.rows);
           tiles[l] = this.generateHighway(map, tiles[l], 0, "e", ["s"], map.dimensions.cols);
           tiles[l] = this.generateHighway(map, tiles[l], ((map.dimensions.cols * map.dimensions.rows) - (map.dimensions.cols * (HIGHWAY_WIDTH / 2))), "e", ["n"], map.dimensions.cols);
+          //fix the highways
+          tiles[l] = game.roads.fixHighways(map, tiles[l], "nw");
+          tiles[l] = game.roads.fixHighways(map, tiles[l], "ne");
+          tiles[l] = game.roads.fixHighways(map, tiles[l], "se");
+          tiles[l] = game.roads.fixHighways(map, tiles[l], "sw");
           break;
         case 3:
 

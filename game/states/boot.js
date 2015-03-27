@@ -90,6 +90,7 @@ Boot.prototype = {
     //build the chunk!
     game.layerManager.setAllTiles(game.generate.generateChunk(map, game.layerManager.getAllTiles()));
 
+
     //other stuff?
     game.time.advancedTiming = true;
     game.debug.renderShadow = false;

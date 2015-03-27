@@ -11,6 +11,7 @@ function Roads(gameObj) {
 Roads.prototype = {
   fixRoads: function(map, tiles, set){
     //give it all your tiles and it makes your roads perfect
+    //Road Magic!
     var problemTiles = [];
     var nsProbs = this.findNSProblems(map, tiles);
     var ewProbs = this.findEWProblems(map, tiles);
@@ -18,6 +19,41 @@ Roads.prototype = {
     //tiles = this.displayProblemTiles(tiles, problemTiles);
     //return tiles;
     tiles = this.fixProblemTiles(map, tiles, set, problemTiles);
+    return tiles;
+  },
+  fixHighways: function(map, tiles, corner){
+    //give it the tiles, the corner this join happens in, puts some corners on your highway
+    //i wish this was more magical, like road magic.  *sigh*.
+    switch (corner){
+      case "nw":
+        var corner = map.dimensions.cols + 1;
+        tiles[0] = game.tiles.highways.open;
+        tiles[1] = game.tiles.highways.straight.w[1];
+        tiles[corner - 1] = game.tiles.highways.straight.n[1];
+        tiles[corner] = game.tiles.highways.corner;
+        break;
+      case "ne":
+        var corner = (map.dimensions.cols * 2) - 2;
+        tiles[(corner - map.dimensions.cols) + 1] = game.tiles.highways.open;
+        tiles[corner - map.dimensions.cols] = game.tiles.highways.straight.e[1];
+        tiles[corner + 1] = game.tiles.highways.straight.n[0];
+        tiles[corner] = game.tiles.highways.corner;
+        break;
+      case "se":
+        var corner = ((map.dimensions.rows * map.dimensions.cols) - map.dimensions.cols) - 2;
+        tiles[(corner + map.dimensions.cols) + 1] = game.tiles.highways.open;
+        tiles[corner + map.dimensions.cols] = game.tiles.highways.straight.e[0];
+        tiles[corner + 1] = game.tiles.highways.straight.n[0];
+        tiles[corner] = game.tiles.highways.corner;
+        break;
+      case "sw":
+        var corner = ((map.dimensions.rows * map.dimensions.cols) - (map.dimensions.cols * 2)) + 1;
+        tiles[(corner + map.dimensions.cols) - 1] = game.tiles.highways.open;
+        tiles[corner + map.dimensions.cols] = game.tiles.highways.straight.w[0];
+        tiles[corner - 1] = game.tiles.highways.straight.s[1];
+        tiles[corner] = game.tiles.highways.corner;
+        break;
+    }
     return tiles;
   },
   displayProblemTiles: function(tiles, problems){

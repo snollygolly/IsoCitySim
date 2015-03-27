@@ -20,6 +20,10 @@ Generate.prototype = {
     //only half of the highway width is used on each side, that equals a full one
     var CITY_CHUNK_SPACE = map.dimensions.cols - (HIGHWAY_WIDTH + HIGHWAY_EASEMENT);
     var CITY_START = (map.dimensions.cols * HIGHWAY_SINGLE_WIDTH) + HIGHWAY_SINGLE_WIDTH;
+    //road consts
+    var ROAD_START_OFFSET = 4;
+    var MIN_ROAD_SPLIT = 3;
+    var MAX_ROAD_SPLIT = 4;
     var l = 0;
     var rect, box;
     //this is hardcoded for now, may change, may not, buildings start on 3
@@ -51,6 +55,21 @@ Generate.prototype = {
           tiles[l] = game.roads.fixHighways(map, tiles[l], "ne");
           tiles[l] = game.roads.fixHighways(map, tiles[l], "se");
           tiles[l] = game.roads.fixHighways(map, tiles[l], "sw");
+          //start to spawn the roads
+          var x = this.getRandomNumber((ROAD_START_OFFSET + 1), (ROAD_START_OFFSET + 2));
+          while (x < (map.dimensions.cols - ROAD_START_OFFSET)){
+            var index = this.getIndexFromCoords(map, tiles, x, HIGHWAY_EASEMENT)
+            tiles[l] = this.generateRoad(map, tiles[l], "city_plain", index, "s", map.dimensions.rows - HIGHWAY_EASEMENT);
+            x += this.getRandomNumber(MIN_ROAD_SPLIT, MAX_ROAD_SPLIT);
+          }
+          var y = this.getRandomNumber((ROAD_START_OFFSET + 1), (ROAD_START_OFFSET + 2));
+          while (y < (map.dimensions.rows - ROAD_START_OFFSET)){
+            var index = this.getIndexFromCoords(map, tiles, HIGHWAY_EASEMENT, y)
+            tiles[l] = this.generateRoad(map, tiles[l], "city_plain", index, "e", map.dimensions.cols - HIGHWAY_EASEMENT);
+            y += this.getRandomNumber(MIN_ROAD_SPLIT, MAX_ROAD_SPLIT);
+          }
+          //road magic!
+          tiles[l] = game.roads.fixRoads(map, tiles[l], "city_plain");
           break;
         case 3:
 

@@ -290,6 +290,13 @@ Generate.prototype = {
     }
     return tiles;
   },
+  getIndexFromCoords: function(map, tiles, x, y){
+    //1,1 is top left corner
+    //give it the x / y of the tile you want, and it'll give you its index in the array
+    var xOffset = x - 1;
+    var yOffset = (y - 1) * map.dimensions.cols;
+    return xOffset + yOffset;
+  },
   getRandomNumber: function(min, max){
     return Math.floor(Math.random() * (max - min + 1)) + min;
   }

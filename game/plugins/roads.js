@@ -81,7 +81,6 @@ Roads.prototype = {
     switch (direction){
       case "n":
         //set join piece
-        console.log("capping x: " + x + " - y:" + y);
         tiles[game.generate.getIndexFromCoords(map, x, y - 1)] = game.tiles.highways.joins.s;
         //caps
         tiles[game.generate.getIndexFromCoords(map, x - 1, y)] = game.tiles.highways.edge_caps.e;

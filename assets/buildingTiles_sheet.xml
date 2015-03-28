@@ -129,4 +129,6 @@
 	<SubTexture name="buildingTiles_127.png" x="595" y="1533" width="99" height="54"/>
 	<SubTexture name="buildingTiles_128.png" x="595" y="1587" width="99" height="54"/>
 	<SubTexture name="buildingTiles_129.png" x="596" y="85" width="99" height="85"/>
+	<SubTexture name="buildingTiles_130.png" x="700" y="0" width="133" height="127"/>
+	<SubTexture name="buildingTiles_131.png" x="700" y="127" width="133" height="127"/>
 </TextureAtlas>

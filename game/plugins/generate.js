@@ -28,6 +28,20 @@ Generate.prototype = {
     //density, 1 out of X building tiles will be a Y
     var PARK_DENSITY = 12;
     var WALL_DENSITY = 12;
+    //this will get it's own section i think
+    var heart = {
+      z_min: 2,
+      z_max: 4,
+      radius: 3
+    };
+    //calculate some values
+    heart.x = this.getRandomNumber((HIGHWAY_SINGLE_WIDTH + heart.radius), (map.dimensions.cols - HIGHWAY_SINGLE_WIDTH) - heart.radius);
+    heart.y = this.getRandomNumber((HIGHWAY_SINGLE_WIDTH + heart.radius), (map.dimensions.rows - HIGHWAY_SINGLE_WIDTH) - heart.radius);
+    heart.x_min = heart.x - heart.radius;
+    heart.x_max = heart.x + heart.radius;
+    heart.y_min = heart.y - heart.radius;
+    heart.y_max = heart.y + heart.radius;
+    //start the looping for layers
     var l = 0;
     var rect, box;
     //this is hardcoded for now, may change, may not, buildings start on 3
@@ -86,7 +100,7 @@ Generate.prototype = {
           var ewTiles = game.roads.getIndices(["e", "w"]);
           var nsTiles = game.roads.getIndices(["n", "s"]);
           var i = 0;
-          var box, cType, index;
+          var cType, index;
           while (i < tiles[l].length){
             //randomly place features
             if (tiles[l-1][i] == 66 && this.getRandomNumber(1,PARK_DENSITY) == 1){
@@ -107,12 +121,21 @@ Generate.prototype = {
                 if (nsTiles.indexOf(tiles[l-1][i]) != -1 && tiles[l-1][i + 1] == 66 && tiles[l][i + 1] === 0){eligibleDirs.push("w");}
                 if (ewTiles.indexOf(tiles[l-1][i]) != -1 && tiles[l-1][i + map.dimensions.cols] == 66 && tiles[l][i + map.dimensions.cols] === 0){eligibleDirs.push("n");}
                 if (nsTiles.indexOf(tiles[l-1][i]) != -1 && tiles[l-1][i - 1] == 66 && tiles[l][i - 1] === 0){eligibleDirs.push("e");}
-                //check to see what to do
+                //check to see what to do (draw the buildings)
                 if (eligibleDirs.indexOf("s") != -1){
                   //match the north side of the road
                   index = i - map.dimensions.cols;
                   if (cType == "building"){
-                    box = game.generate.generateBuilding("s", 1, 3);
+                    var coords = this.getCoordsFromIndex(map, index);
+                    console.log("drawing south: x: " + coords.x + " - y: " + coords.y);
+                    console.log(heart);
+                    if (coords.x >= heart.x_min && coords.x <= heart.x_max && coords.y >= heart.y_min && coords.y <= heart.y_max){
+                      //this is a commercial building
+                      box = game.generate.generateBuilding("commercial", "s", heart.z_min, heart.z_max);
+                    }else{
+                      //this is a residential building
+                      box = game.generate.generateBuilding("residential", "s", 1, 2);
+                    }
                     tiles = game.generate.mergePartial3DSafe(map, tiles, box, l, index);
                   }else if (cType == "wall"){
                     tiles[l-1][index] = game.tiles.walls.s[this.getRandomNumber(0, (game.tiles.walls.s.length - 1))];
@@ -122,7 +145,14 @@ Generate.prototype = {
                   //match the west side of the road
                   index = i - 1;
                   if (cType == "building"){
-                    box = game.generate.generateBuilding("e", 1, 3);
+                    var coords = this.getCoordsFromIndex(map, index);
+                    if (coords.x >= heart.x_min && coords.x <= heart.x_max && coords.y >= heart.y_min && coords.y <= heart.y_max){
+                      //this is a commercial building
+                      box = game.generate.generateBuilding("commercial", "e", heart.z_min, heart.z_max);
+                    }else{
+                      //this is a residential building
+                      box = game.generate.generateBuilding("residential", "e", 1, 2);
+                    }
                     tiles = game.generate.mergePartial3DSafe(map, tiles, box, l, index);
                   }else if (cType == "wall"){
                     tiles[l-1][index] = game.tiles.walls.e[this.getRandomNumber(0, (game.tiles.walls.e.length - 1))];
@@ -132,7 +162,14 @@ Generate.prototype = {
                   //match the east side of the road
                   index = i + 1;
                   if (cType == "building"){
-                    box = game.generate.generateBuilding("w", 1, 3);
+                    var coords = this.getCoordsFromIndex(map, index);
+                    if (coords.x >= heart.x_min && coords.x <= heart.x_max && coords.y >= heart.y_min && coords.y <= heart.y_max){
+                      //this is a commercial building
+                      box = game.generate.generateBuilding("commercial", "w", heart.z_min, heart.z_max);
+                    }else{
+                      //this is a residential building
+                      box = game.generate.generateBuilding("residential", "w", 1, 2);
+                    }
                     tiles = game.generate.mergePartial3DSafe(map, tiles, box, l, index);
                   }else if (cType == "wall"){
                     tiles[l-1][index] = game.tiles.walls.w[this.getRandomNumber(0, (game.tiles.walls.w.length - 1))];
@@ -142,7 +179,14 @@ Generate.prototype = {
                   //match the south side of the road
                   index = i + map.dimensions.cols;
                   if (cType == "building"){
-                    box = game.generate.generateBuilding("n", 1, 3);
+                    var coords = this.getCoordsFromIndex(map, index);
+                    if (coords.x >= heart.x_min && coords.x <= heart.x_max && coords.y >= heart.y_min && coords.y <= heart.y_max){
+                      //this is a commercial building
+                      box = game.generate.generateBuilding("commercial", "n", heart.z_min, heart.z_max);
+                    }else{
+                      //this is a residential building
+                      box = game.generate.generateBuilding("residential", "n", 1, 2);
+                    }
                     tiles = game.generate.mergePartial3DSafe(map, tiles, box, l, index);
                   }else if (cType == "wall"){
                     tiles[l-1][index] = game.tiles.walls.n[this.getRandomNumber(0, (game.tiles.walls.n.length - 1))];
@@ -233,31 +277,36 @@ Generate.prototype = {
     return tiles;
   },
   //buildings starts here
-  generateBuilding: function(direction, low, high){
-    var colors = ["red", "grey"];
+  generateBuilding: function(type, direction, low, high){
+    var colors = ["red", "grey", "brown", "beige"];
     var color = colors[this.getRandomNumber(0, colors.length -1)];
-    var building = {
-      bottom: game.tiles.buildings[color].bottoms[direction][this.getRandomNumber(0, game.tiles.buildings[color].bottoms[direction].length -1)],
-      floors: this.getRandomNumber(low, high)
-    };
-    if (this.getRandomNumber(0,1) == 1){
-      //this is going to be an "all" direction top
-      building.top = game.tiles.buildings[color].tops["all"][this.getRandomNumber(0, game.tiles.buildings[color].tops["all"].length -1)];
-    }else{
-      //directional top
-      if (direction == "n" || direction == "s"){
-        building.top = game.tiles.buildings[color].tops["ns"][this.getRandomNumber(0, game.tiles.buildings[color].tops["ns"].length -1)];
+    var building = null;
+    while (building === null){
+      if (game.tiles.buildings[type][color].bottoms[direction].length != 0){
+        var building = {
+          bottom: game.tiles.buildings[type][color].bottoms[direction][this.getRandomNumber(0, game.tiles.buildings[type][color].bottoms[direction].length -1)],
+          floors: this.getRandomNumber(low, high)
+        };
       }else{
-        building.top = game.tiles.buildings[color].tops["ew"][this.getRandomNumber(0, game.tiles.buildings[color].tops["ew"].length -1)];
+        color = colors[this.getRandomNumber(0, colors.length -1)];
       }
     }
-    if (this.getRandomNumber(0,1) == 1){
+    console.log("generateBuilding: color: " + color + " - type: " + type + " - direction: " + direction);
+    //directional top
+    if (direction == "n" || direction == "s"){
+      building.top = game.tiles.buildings[type][color].tops["ns"][this.getRandomNumber(0, game.tiles.buildings[type][color].tops["ns"].length -1)];
+    }else{
+      building.top = game.tiles.buildings[type][color].tops["ew"][this.getRandomNumber(0, game.tiles.buildings[type][color].tops["ew"].length -1)];
+    }
+    //pick a roof
+    if (this.getRandomNumber(0,1) == 1 && game.tiles.buildings[type]["all"].roofs["all"].length != 0){
       //this is going to be an "all" direction roof
-      building.roof = game.tiles.buildings["all"].roofs["all"][this.getRandomNumber(0, game.tiles.buildings["all"].roofs["all"].length -1)];
+      building.roof = game.tiles.buildings[type]["all"].roofs["all"][this.getRandomNumber(0, game.tiles.buildings[type]["all"].roofs["all"].length -1)];
     }else{
       //directional top
-      building.roof = game.tiles.buildings["all"].roofs[direction][this.getRandomNumber(0, game.tiles.buildings["all"].roofs[direction].length -1)];
+      building.roof = game.tiles.buildings[type]["all"].roofs[direction][this.getRandomNumber(0, game.tiles.buildings[type]["all"].roofs[direction].length -1)];
     }
+    console.log(building);
     return this.makeBuilding(building);
   },
   makeBuilding: function(building){
@@ -386,6 +435,17 @@ Generate.prototype = {
       l++;
     }
     return tiles;
+  },
+  getCoordsFromIndex: function(map, index){
+    //1,1 is top left corner
+    //give it the index of the tile you want and get the x,y coords
+    var y = Math.floor(index / map.dimensions.rows);
+    var x = index - (y * map.dimensions.cols);
+    console.log("getCoordsFromIndex: x: " + x + " - y: " + y + " - index: " + index);
+    return {
+      x: x + 1,
+      y: y + 1
+    };
   },
   getIndexFromCoords: function(map, x, y){
     //1,1 is top left corner

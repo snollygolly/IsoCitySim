@@ -58,14 +58,20 @@ Generate.prototype = {
           //start to spawn the roads
           var x = this.getRandomNumber((ROAD_START_OFFSET + 1), (ROAD_START_OFFSET + 2));
           while (x < (map.dimensions.cols - ROAD_START_OFFSET)){
-            var index = this.getIndexFromCoords(map, tiles, x, HIGHWAY_EASEMENT)
+            var index = this.getIndexFromCoords(map, x, HIGHWAY_EASEMENT)
             tiles[l] = this.generateRoad(map, tiles[l], "city_plain", index, "s", map.dimensions.rows - HIGHWAY_EASEMENT);
+            //cap the highways
+            tiles[l] = game.roads.joinRoadHighway(map, tiles[l], x, HIGHWAY_EASEMENT, "n");
+            tiles[l] = game.roads.joinRoadHighway(map, tiles[l], x, map.dimensions.rows - 1, "s");
             x += this.getRandomNumber(MIN_ROAD_SPLIT, MAX_ROAD_SPLIT);
           }
           var y = this.getRandomNumber((ROAD_START_OFFSET + 1), (ROAD_START_OFFSET + 2));
           while (y < (map.dimensions.rows - ROAD_START_OFFSET)){
-            var index = this.getIndexFromCoords(map, tiles, HIGHWAY_EASEMENT, y)
-            tiles[l] = this.generateRoad(map, tiles[l], "city_plain", index, "e", map.dimensions.cols - HIGHWAY_EASEMENT);
+            var index = this.getIndexFromCoords(map, HIGHWAY_EASEMENT, y)
+            tiles[l] = this.generateRoad(map, tiles[l], "city_plain", index, "e", map.dimensions.rows - HIGHWAY_EASEMENT);
+            //cap the highways
+            tiles[l] = game.roads.joinRoadHighway(map, tiles[l], HIGHWAY_EASEMENT, y, "w");
+            tiles[l] = game.roads.joinRoadHighway(map, tiles[l], map.dimensions.cols - 1, y, "e");
             y += this.getRandomNumber(MIN_ROAD_SPLIT, MAX_ROAD_SPLIT);
           }
           //road magic!
@@ -91,7 +97,7 @@ Generate.prototype = {
     var b = 0;
     while (i < length){
       //flip flop b
-      b = ((b == 0) ? 1 : 0);
+      //b = ((b == 0) ? 1 : 0);
       fullSlice = [edge[b], highway[0], highway[1], edge[b]];
       //the the direction matching logic stuff
       if (direction == "e" || direction == "w"){
@@ -309,7 +315,7 @@ Generate.prototype = {
     }
     return tiles;
   },
-  getIndexFromCoords: function(map, tiles, x, y){
+  getIndexFromCoords: function(map, x, y){
     //1,1 is top left corner
     //give it the x / y of the tile you want, and it'll give you its index in the array
     var xOffset = x - 1;

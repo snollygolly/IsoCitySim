@@ -98,8 +98,8 @@ Roads.prototype = {
         //set join piece
         tiles[game.generate.getIndexFromCoords(map, x - 1, y)] = game.tiles.highways.joins.e;
         //caps
-        tiles[game.generate.getIndexFromCoords(map, x, y + 1)] = game.tiles.highways.edge_caps.s;
-        tiles[game.generate.getIndexFromCoords(map, x, y - 1)] = game.tiles.highways.edge_caps.n;
+        tiles[game.generate.getIndexFromCoords(map, x, y + 1)] = game.tiles.highways.edge_caps.n;
+        tiles[game.generate.getIndexFromCoords(map, x, y - 1)] = game.tiles.highways.edge_caps.s;
         break;
       case "s":
         //set join piece

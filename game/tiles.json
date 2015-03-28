@@ -132,6 +132,27 @@
       "s": true,
       "set": "city_plain"
     },
+    "56":{
+      "n": true,
+      "e": false,
+      "w": false,
+      "s": true,
+      "set": "city_intersection"
+    },
+    "64":{
+      "n": false,
+      "e": true,
+      "w": true,
+      "s": false,
+      "set": "city_intersection"
+    }
+  },
+  "parks":[43,51,59,67],
+  "walls":{
+    "n": [12,23],
+    "e": [8,17],
+    "s": [7,16],
+    "w": [4,11],
   },
   "buildings": {
     "red":{

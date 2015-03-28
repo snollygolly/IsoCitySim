@@ -29,49 +29,84 @@ Roads.prototype = {
         var cornerX = 2;
         var cornerY = 2;
         //fix the corner roads
-        tiles[game.generate.getIndexFromCoords(map, tiles, cornerX - 1, cornerY - 1)] = game.tiles.highways.open;
-        tiles[game.generate.getIndexFromCoords(map, tiles, cornerX, cornerY - 1)] = game.tiles.highways.straight.w[1];
-        tiles[game.generate.getIndexFromCoords(map, tiles, cornerX - 1, cornerY)] = game.tiles.highways.straight.n[1];
-        tiles[game.generate.getIndexFromCoords(map, tiles, cornerX, cornerY)] = game.tiles.highways.corner;
+        tiles[game.generate.getIndexFromCoords(map, cornerX - 1, cornerY - 1)] = game.tiles.highways.open;
+        tiles[game.generate.getIndexFromCoords(map, cornerX, cornerY - 1)] = game.tiles.highways.straight.w[1];
+        tiles[game.generate.getIndexFromCoords(map, cornerX - 1, cornerY)] = game.tiles.highways.straight.n[1];
+        tiles[game.generate.getIndexFromCoords(map, cornerX, cornerY)] = game.tiles.highways.corner;
         //fix edge caps
-        tiles[game.generate.getIndexFromCoords(map, tiles, cornerX + 1, cornerY)] = game.tiles.highways.edge_caps.w;
-        tiles[game.generate.getIndexFromCoords(map, tiles, cornerX, cornerY + 1)] = game.tiles.highways.edge_caps.n;
+        tiles[game.generate.getIndexFromCoords(map, cornerX + 1, cornerY)] = game.tiles.highways.edge_caps.w;
+        tiles[game.generate.getIndexFromCoords(map, cornerX, cornerY + 1)] = game.tiles.highways.edge_caps.n;
         break;
       case "ne":
         var cornerX = map.dimensions.cols - 1;
         var cornerY = 2;
         //fix the corner roads
-        tiles[game.generate.getIndexFromCoords(map, tiles, cornerX + 1, cornerY - 1)] = game.tiles.highways.open;
-        tiles[game.generate.getIndexFromCoords(map, tiles, cornerX, cornerY - 1)] = game.tiles.highways.straight.w[1];
-        tiles[game.generate.getIndexFromCoords(map, tiles, cornerX + 1, cornerY)] = game.tiles.highways.straight.s[0];
-        tiles[game.generate.getIndexFromCoords(map, tiles, cornerX, cornerY)] = game.tiles.highways.corner;
+        tiles[game.generate.getIndexFromCoords(map, cornerX + 1, cornerY - 1)] = game.tiles.highways.open;
+        tiles[game.generate.getIndexFromCoords(map, cornerX, cornerY - 1)] = game.tiles.highways.straight.w[1];
+        tiles[game.generate.getIndexFromCoords(map, cornerX + 1, cornerY)] = game.tiles.highways.straight.s[0];
+        tiles[game.generate.getIndexFromCoords(map, cornerX, cornerY)] = game.tiles.highways.corner;
         //fix edge caps
-        tiles[game.generate.getIndexFromCoords(map, tiles, cornerX - 1, cornerY)] = game.tiles.highways.edge_caps.e;
-        tiles[game.generate.getIndexFromCoords(map, tiles, cornerX, cornerY + 1)] = game.tiles.highways.edge_caps.n;
+        tiles[game.generate.getIndexFromCoords(map, cornerX - 1, cornerY)] = game.tiles.highways.edge_caps.e;
+        tiles[game.generate.getIndexFromCoords(map, cornerX, cornerY + 1)] = game.tiles.highways.edge_caps.n;
         break;
       case "se":
         var cornerX = map.dimensions.cols - 1;
         var cornerY = map.dimensions.rows - 1;
         //fix the corner roads
-        tiles[game.generate.getIndexFromCoords(map, tiles, cornerX + 1, cornerY + 1)] = game.tiles.highways.open;
-        tiles[game.generate.getIndexFromCoords(map, tiles, cornerX, cornerY + 1)] = game.tiles.highways.straight.e[0];
-        tiles[game.generate.getIndexFromCoords(map, tiles, cornerX + 1, cornerY)] = game.tiles.highways.straight.n[0];
-        tiles[game.generate.getIndexFromCoords(map, tiles, cornerX, cornerY)] = game.tiles.highways.corner;
+        tiles[game.generate.getIndexFromCoords(map, cornerX + 1, cornerY + 1)] = game.tiles.highways.open;
+        tiles[game.generate.getIndexFromCoords(map, cornerX, cornerY + 1)] = game.tiles.highways.straight.e[0];
+        tiles[game.generate.getIndexFromCoords(map, cornerX + 1, cornerY)] = game.tiles.highways.straight.n[0];
+        tiles[game.generate.getIndexFromCoords(map, cornerX, cornerY)] = game.tiles.highways.corner;
         //fix edge caps
-        tiles[game.generate.getIndexFromCoords(map, tiles, cornerX - 1, cornerY)] = game.tiles.highways.edge_caps.e;
-        tiles[game.generate.getIndexFromCoords(map, tiles, cornerX, cornerY - 1)] = game.tiles.highways.edge_caps.s;
+        tiles[game.generate.getIndexFromCoords(map, cornerX - 1, cornerY)] = game.tiles.highways.edge_caps.e;
+        tiles[game.generate.getIndexFromCoords(map, cornerX, cornerY - 1)] = game.tiles.highways.edge_caps.s;
         break;
       case "sw":
         var cornerX = 2;
         var cornerY = map.dimensions.rows - 1;
         //fix the corner roads
-        tiles[game.generate.getIndexFromCoords(map, tiles, cornerX - 1, cornerY + 1)] = game.tiles.highways.open;
-        tiles[game.generate.getIndexFromCoords(map, tiles, cornerX, cornerY + 1)] = game.tiles.highways.straight.w[0];
-        tiles[game.generate.getIndexFromCoords(map, tiles, cornerX - 1, cornerY)] = game.tiles.highways.straight.s[1];
-        tiles[game.generate.getIndexFromCoords(map, tiles, cornerX, cornerY)] = game.tiles.highways.corner;
+        tiles[game.generate.getIndexFromCoords(map, cornerX - 1, cornerY + 1)] = game.tiles.highways.open;
+        tiles[game.generate.getIndexFromCoords(map, cornerX, cornerY + 1)] = game.tiles.highways.straight.w[0];
+        tiles[game.generate.getIndexFromCoords(map, cornerX - 1, cornerY)] = game.tiles.highways.straight.s[1];
+        tiles[game.generate.getIndexFromCoords(map, cornerX, cornerY)] = game.tiles.highways.corner;
         //fix edge caps
-        tiles[game.generate.getIndexFromCoords(map, tiles, cornerX + 1, cornerY)] = game.tiles.highways.edge_caps.w;
-        tiles[game.generate.getIndexFromCoords(map, tiles, cornerX, cornerY - 1)] = game.tiles.highways.edge_caps.s;
+        tiles[game.generate.getIndexFromCoords(map, cornerX + 1, cornerY)] = game.tiles.highways.edge_caps.w;
+        tiles[game.generate.getIndexFromCoords(map, cornerX, cornerY - 1)] = game.tiles.highways.edge_caps.s;
+        break;
+    }
+    return tiles;
+  },
+  joinRoadHighway: function(map, tiles, x, y, direction){
+    //joins together highways and roads
+    switch (direction){
+      case "n":
+        //set join piece
+        console.log("capping x: " + x + " - y:" + y);
+        tiles[game.generate.getIndexFromCoords(map, x, y - 1)] = game.tiles.highways.joins.s;
+        //caps
+        tiles[game.generate.getIndexFromCoords(map, x - 1, y)] = game.tiles.highways.edge_caps.e;
+        tiles[game.generate.getIndexFromCoords(map, x + 1, y)] = game.tiles.highways.edge_caps.w;
+        break;
+      case "e":
+        //set join piece
+        tiles[game.generate.getIndexFromCoords(map, x + 1, y)] = game.tiles.highways.joins.w;
+        //caps
+        tiles[game.generate.getIndexFromCoords(map, x, y - 1)] = game.tiles.highways.edge_caps.s;
+        tiles[game.generate.getIndexFromCoords(map, x, y + 1)] = game.tiles.highways.edge_caps.n;
+        break;
+      case "w":
+        //set join piece
+        tiles[game.generate.getIndexFromCoords(map, x - 1, y)] = game.tiles.highways.joins.e;
+        //caps
+        tiles[game.generate.getIndexFromCoords(map, x, y + 1)] = game.tiles.highways.edge_caps.s;
+        tiles[game.generate.getIndexFromCoords(map, x, y - 1)] = game.tiles.highways.edge_caps.n;
+        break;
+      case "s":
+        //set join piece
+        tiles[game.generate.getIndexFromCoords(map, x, y + 1)] = game.tiles.highways.joins.n;
+        //caps
+        tiles[game.generate.getIndexFromCoords(map, x - 1, y)] = game.tiles.highways.edge_caps.e;
+        tiles[game.generate.getIndexFromCoords(map, x + 1, y)] = game.tiles.highways.edge_caps.w;
         break;
     }
     return tiles;
@@ -143,7 +178,11 @@ Roads.prototype = {
 
       }
       //we have our needle now, let's find it!
-      tiles[problems[i]] = this.getIndexFromObj(needle);
+      var index = this.getIndexFromObj(needle);
+      if (index != false){
+        //we found a match
+        tiles[problems[i]] = index;
+      }
       i++;
     }
     return tiles;
@@ -215,7 +254,7 @@ Roads.prototype = {
       }
     }
     console.log("! No match found for getIndexFromObj in Roads");
-    console.log(JSON.stringify(needle));
+    //console.log(JSON.stringify(needle));
     return false;
   },
   getIndices: function(directions){

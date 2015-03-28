@@ -182,6 +182,10 @@ Roads.prototype = {
       if (index != false){
         //we found a match
         tiles[problems[i]] = index;
+        if (needle.n === true){tiles[n] = this.getIndex("ns", "city_intersection");}
+        if (needle.e === true){tiles[e] = this.getIndex("ew", "city_intersection");}
+        if (needle.w === true){tiles[w] = this.getIndex("ew", "city_intersection");}
+        if (needle.s === true){tiles[s] = this.getIndex("ns", "city_intersection");}
       }
       i++;
     }

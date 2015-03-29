@@ -115,7 +115,7 @@ Generate.prototype = {
                 cType = "building"
               }
               if (tiles[l-1][i] != 66) {
-                //find eligible directories
+                //find eligible directions
                 var eligibleDirs = [];
                 if (ewTiles.indexOf(tiles[l-1][i]) != -1 && tiles[l-1][i - map.dimensions.cols] == 66){eligibleDirs.push("s");}
                 if (nsTiles.indexOf(tiles[l-1][i]) != -1 && tiles[l-1][i + 1] == 66){eligibleDirs.push("w");}

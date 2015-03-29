@@ -6,16 +6,11 @@ var map = {};
 var layer;
 var cursors;
 
-var xOffset;
-var yOffset;
-
 var size;
 var size_z;
 
 function Boot() {
   //set up the map
-  xOffset = 100;
-  yOffset = 100;
   //set up tile size
   size = 74;
   size_z = 32;
@@ -79,7 +74,9 @@ Boot.prototype = {
     //set up groups
     game.layerManager.group = game.add.group();
     //generate the world
-    game.world.setBounds(0, 0, ((size * 2) * map.dimensions.cols), ((size * 2) * map.dimensions.rows));
+    game.world.setBounds(0, 0, (map.dimensions.cols * 132), (map.dimensions.rows * 70));
+    game.camera.x = ((map.dimensions.cols * 132) / 2) - (1024 / 2);
+    game.camera.y = ((map.dimensions.rows * 70) / 2) - (768 / 2);
     //generate all the layers
     var l = 0;
     while (l < map.layers.length){
@@ -143,8 +140,8 @@ Boot.prototype = {
       //draw each tile in each layer
       i = 0;
       while (i < tiles[l].length){
-        var x = ((i % map.dimensions.cols) * size) + xOffset;
-        var y = (Math.floor(i / map.dimensions.cols) * size) + yOffset;
+        var x = ((i % map.dimensions.cols) * size);
+        var y = (Math.floor(i / map.dimensions.cols) * size);
         var z = game.layerManager.layers[l].z;
         //add the tile
         if (tiles[l][i] != 0){

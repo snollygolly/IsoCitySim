@@ -902,6 +902,8 @@ var yOffset;
 var size;
 var size_z;
 
+var buildings = [];
+
 function Boot() {
   //set up the map
   xOffset = 100;
@@ -1039,12 +1041,36 @@ Boot.prototype = {
         //add the tile
         if (tiles[l][i] != 0){
           tile = game.add.isoSprite(x, y, z, game.layerManager.layers[l].tileset, tiles[l][i], game.layerManager.layers[l].group);
+          tile.meta = {};
+          tile.meta.index = i;
           tile.anchor.set(0.5, 1);
           tile.smoothed = false;
           tile.body.moves = false;
 
           tile.scale.x = 1;
           tile.scale.y = 1;
+
+          if (l == 3){
+            buildings[i] = [];
+            tile.inputEnabled = true;
+            tile.events.onInputOver.add(function(sprite, pointer){
+              var s = 0;
+              while (s < buildings[sprite.meta.index].length){
+                buildings[sprite.meta.index][s].tint = 0x86bfda;
+                s++;
+              }
+            }, this);
+            tile.events.onInputOut.add(function(sprite, pointer){
+              var s = 0;
+              while (s < buildings[sprite.meta.index].length){
+                buildings[sprite.meta.index][s].tint = 0xffffff;
+                s++;
+              }
+            }, this);
+          }
+          if (l >= 3){
+            buildings[i].push(tile);
+          }
         }
         i++;
       }

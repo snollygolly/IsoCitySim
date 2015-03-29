@@ -54,6 +54,20 @@ Generate.prototype = {
     //density, 1 out of X building tiles will be a Y
     var PARK_DENSITY = 12;
     var WALL_DENSITY = 12;
+    //this will get it's own section i think
+    var heart = {
+      z_min: 2,
+      z_max: 6,
+      radius: 3
+    };
+    //calculate some values
+    heart.x = this.getRandomNumber((HIGHWAY_SINGLE_WIDTH + heart.radius), (map.dimensions.cols - HIGHWAY_SINGLE_WIDTH) - heart.radius);
+    heart.y = this.getRandomNumber((HIGHWAY_SINGLE_WIDTH + heart.radius), (map.dimensions.rows - HIGHWAY_SINGLE_WIDTH) - heart.radius);
+    heart.x_min = heart.x - heart.radius;
+    heart.x_max = heart.x + heart.radius;
+    heart.y_min = heart.y - heart.radius;
+    heart.y_max = heart.y + heart.radius;
+    //start the looping for layers
     var l = 0;
     var rect, box;
     //this is hardcoded for now, may change, may not, buildings start on 3
@@ -112,7 +126,7 @@ Generate.prototype = {
           var ewTiles = game.roads.getIndices(["e", "w"]);
           var nsTiles = game.roads.getIndices(["n", "s"]);
           var i = 0;
-          var box, cType, index;
+          var cType, index;
           while (i < tiles[l].length){
             //randomly place features
             if (tiles[l-1][i] == 66 && this.getRandomNumber(1,PARK_DENSITY) == 1){
@@ -129,49 +143,61 @@ Generate.prototype = {
               if (tiles[l-1][i] != 66) {
                 //find eligible directories
                 var eligibleDirs = [];
-                if (ewTiles.indexOf(tiles[l-1][i]) != -1 && tiles[l-1][i - map.dimensions.cols] == 66 && tiles[l][i - map.dimensions.cols] === 0){eligibleDirs.push("s");}
-                if (nsTiles.indexOf(tiles[l-1][i]) != -1 && tiles[l-1][i + 1] == 66 && tiles[l][i + 1] === 0){eligibleDirs.push("w");}
-                if (ewTiles.indexOf(tiles[l-1][i]) != -1 && tiles[l-1][i + map.dimensions.cols] == 66 && tiles[l][i + map.dimensions.cols] === 0){eligibleDirs.push("n");}
-                if (nsTiles.indexOf(tiles[l-1][i]) != -1 && tiles[l-1][i - 1] == 66 && tiles[l][i - 1] === 0){eligibleDirs.push("e");}
-                //check to see what to do
+                if (ewTiles.indexOf(tiles[l-1][i]) != -1 && tiles[l-1][i - map.dimensions.cols] == 66){eligibleDirs.push("s");}
+                if (nsTiles.indexOf(tiles[l-1][i]) != -1 && tiles[l-1][i + 1] == 66){eligibleDirs.push("w");}
+                if (ewTiles.indexOf(tiles[l-1][i]) != -1 && tiles[l-1][i + map.dimensions.cols] == 66){eligibleDirs.push("n");}
+                if (nsTiles.indexOf(tiles[l-1][i]) != -1 && tiles[l-1][i - 1] == 66){eligibleDirs.push("e");}
+                //check to see what to do (draw the buildings)
                 if (eligibleDirs.indexOf("s") != -1){
                   //match the north side of the road
                   index = i - map.dimensions.cols;
-                  if (cType == "building"){
-                    box = game.generate.generateBuilding("s", 1, 3);
-                    tiles = game.generate.mergePartial3DSafe(map, tiles, box, l, index);
-                  }else if (cType == "wall"){
-                    tiles[l-1][index] = game.tiles.walls.s[this.getRandomNumber(0, (game.tiles.walls.s.length - 1))];
+                  if (tiles[l][index] == 0){
+                    if (cType == "building"){
+                      var coords = this.getCoordsFromIndex(map, index);
+                      box = game.generate.generateBuilding("s", coords, heart);
+                      tiles = game.generate.mergePartial3DSafe(map, tiles, box, l, index);
+                    }else if (cType == "wall"){
+                      tiles[l-1][index] = game.tiles.walls.s[this.getRandomNumber(0, (game.tiles.walls.s.length - 1))];
+                    }
                   }
                 }
                 if (eligibleDirs.indexOf("e") != -1){
                   //match the west side of the road
                   index = i - 1;
-                  if (cType == "building"){
-                    box = game.generate.generateBuilding("e", 1, 3);
-                    tiles = game.generate.mergePartial3DSafe(map, tiles, box, l, index);
-                  }else if (cType == "wall"){
-                    tiles[l-1][index] = game.tiles.walls.e[this.getRandomNumber(0, (game.tiles.walls.e.length - 1))];
+                  if (tiles[l][index] == 0){
+                    if (cType == "building"){
+                      var coords = this.getCoordsFromIndex(map, index);
+                      box = game.generate.generateBuilding("e", coords, heart);
+                      tiles = game.generate.mergePartial3DSafe(map, tiles, box, l, index);
+                    }else if (cType == "wall"){
+                      tiles[l-1][index] = game.tiles.walls.e[this.getRandomNumber(0, (game.tiles.walls.e.length - 1))];
+                    }
                   }
                 }
                 if (eligibleDirs.indexOf("w") != -1){
                   //match the east side of the road
                   index = i + 1;
-                  if (cType == "building"){
-                    box = game.generate.generateBuilding("w", 1, 3);
-                    tiles = game.generate.mergePartial3DSafe(map, tiles, box, l, index);
-                  }else if (cType == "wall"){
-                    tiles[l-1][index] = game.tiles.walls.w[this.getRandomNumber(0, (game.tiles.walls.w.length - 1))];
+                  if (tiles[l][index] == 0){
+                    if (cType == "building"){
+                      var coords = this.getCoordsFromIndex(map, index);
+                      box = game.generate.generateBuilding("w", coords, heart);
+                      tiles = game.generate.mergePartial3DSafe(map, tiles, box, l, index);
+                    }else if (cType == "wall"){
+                      tiles[l-1][index] = game.tiles.walls.w[this.getRandomNumber(0, (game.tiles.walls.w.length - 1))];
+                    }
                   }
                 }
                 if (eligibleDirs.indexOf("n") != -1){
                   //match the south side of the road
                   index = i + map.dimensions.cols;
-                  if (cType == "building"){
-                    box = game.generate.generateBuilding("n", 1, 3);
-                    tiles = game.generate.mergePartial3DSafe(map, tiles, box, l, index);
-                  }else if (cType == "wall"){
-                    tiles[l-1][index] = game.tiles.walls.n[this.getRandomNumber(0, (game.tiles.walls.n.length - 1))];
+                  if (tiles[l][index] == 0){
+                    if (cType == "building"){
+                      var coords = this.getCoordsFromIndex(map, index);
+                      box = game.generate.generateBuilding("n", coords, heart);
+                      tiles = game.generate.mergePartial3DSafe(map, tiles, box, l, index);
+                    }else if (cType == "wall"){
+                      tiles[l-1][index] = game.tiles.walls.n[this.getRandomNumber(0, (game.tiles.walls.n.length - 1))];
+                    }
                   }
                 }
               }
@@ -259,30 +285,59 @@ Generate.prototype = {
     return tiles;
   },
   //buildings starts here
-  generateBuilding: function(direction, low, high){
-    var colors = ["red", "grey"];
-    var color = colors[this.getRandomNumber(0, colors.length -1)];
-    var building = {
-      bottom: game.tiles.buildings[color].bottoms[direction][this.getRandomNumber(0, game.tiles.buildings[color].bottoms[direction].length -1)],
-      floors: this.getRandomNumber(low, high)
-    };
-    if (this.getRandomNumber(0,1) == 1){
-      //this is going to be an "all" direction top
-      building.top = game.tiles.buildings[color].tops["all"][this.getRandomNumber(0, game.tiles.buildings[color].tops["all"].length -1)];
+  generateBuilding: function(direction, coords, heart){
+    //test stuff with auto types and height
+    var type;
+    var low = heart.z_min;
+    var high = heart.z_max;
+    if (coords.x >= heart.x_min && coords.x <= heart.x_max && coords.y >= heart.y_min && coords.y <= heart.y_max){
+      //this is going to be a commercial building
+      type = "commercial";
+      //figure out the distance to the heart (int = intensity)
+      var int_p = 1 / (heart.radius + 1);
+      var int_m_x = Math.abs(coords.x - heart.x);
+      var int_m_y = Math.abs(coords.y - heart.y);
+      var int_m = (int_m_x + int_m_y) / 2;
+      var int = 1 - (int_m * int_p);
+      var z_mod = ((high - low) * int);
+      high = Math.floor(z_mod + low);
+      low = (((high - 1) < low) ? low : (high - 1));
     }else{
-      //directional top
-      if (direction == "n" || direction == "s"){
-        building.top = game.tiles.buildings[color].tops["ns"][this.getRandomNumber(0, game.tiles.buildings[color].tops["ns"].length -1)];
+      //this is a residential building
+      type = "residential";
+      low = 1;
+      high = 2;
+    }
+    //end test
+    var colors = ["red", "grey", "brown", "beige"];
+    var color = colors[this.getRandomNumber(0, colors.length -1)];
+    var building = null;
+    //while we don't find a suitable color...
+    while (building === null){
+      //try to find a suitable color
+      if (game.tiles.buildings[type][color].bottoms[direction].length != 0){
+        var building = {
+          bottom: game.tiles.buildings[type][color].bottoms[direction][this.getRandomNumber(0, game.tiles.buildings[type][color].bottoms[direction].length -1)],
+          floors: this.getRandomNumber(low, high)
+        };
       }else{
-        building.top = game.tiles.buildings[color].tops["ew"][this.getRandomNumber(0, game.tiles.buildings[color].tops["ew"].length -1)];
+        //if we didn't find a suitable color, shuffle the colors
+        color = colors[this.getRandomNumber(0, colors.length -1)];
       }
     }
-    if (this.getRandomNumber(0,1) == 1){
+    //directional top
+    if (direction == "n" || direction == "s"){
+      building.top = game.tiles.buildings[type][color].tops["ns"][this.getRandomNumber(0, game.tiles.buildings[type][color].tops["ns"].length -1)];
+    }else{
+      building.top = game.tiles.buildings[type][color].tops["ew"][this.getRandomNumber(0, game.tiles.buildings[type][color].tops["ew"].length -1)];
+    }
+    //pick a roof
+    if (this.getRandomNumber(0,1) == 1 && game.tiles.buildings[type]["all"].roofs["all"].length != 0){
       //this is going to be an "all" direction roof
-      building.roof = game.tiles.buildings["all"].roofs["all"][this.getRandomNumber(0, game.tiles.buildings["all"].roofs["all"].length -1)];
+      building.roof = game.tiles.buildings[type]["all"].roofs["all"][this.getRandomNumber(0, game.tiles.buildings[type]["all"].roofs["all"].length -1)];
     }else{
       //directional top
-      building.roof = game.tiles.buildings["all"].roofs[direction][this.getRandomNumber(0, game.tiles.buildings["all"].roofs[direction].length -1)];
+      building.roof = game.tiles.buildings[type]["all"].roofs[direction][this.getRandomNumber(0, game.tiles.buildings[type]["all"].roofs[direction].length -1)];
     }
     return this.makeBuilding(building);
   },
@@ -412,6 +467,16 @@ Generate.prototype = {
       l++;
     }
     return tiles;
+  },
+  getCoordsFromIndex: function(map, index){
+    //1,1 is top left corner
+    //give it the index of the tile you want and get the x,y coords
+    var y = Math.floor(index / map.dimensions.rows);
+    var x = index - (y * map.dimensions.cols);
+    return {
+      x: x + 1,
+      y: y + 1
+    };
   },
   getIndexFromCoords: function(map, x, y){
     //1,1 is top left corner
@@ -596,7 +661,6 @@ Roads.prototype = {
     switch (direction){
       case "n":
         //set join piece
-        console.log("capping x: " + x + " - y:" + y);
         tiles[game.generate.getIndexFromCoords(map, x, y - 1)] = game.tiles.highways.joins.s;
         //caps
         tiles[game.generate.getIndexFromCoords(map, x - 1, y)] = game.tiles.highways.edge_caps.e;
@@ -1262,39 +1326,122 @@ module.exports={
     "w": [4,11],
   },
   "buildings": {
-    "red":{
-      "bottoms": {
-        "n": [33,46,92],
-        "e": [1,9,17,26,36,41,99,21],
-        "s": [2,10,18,30,34,113,123,14],
-        "w": [25,40,106],
+    "residential":{
+      "red":{
+        "bottoms": {
+          "n": [92],
+          "e": [36],
+          "s": [30],
+          "w": [106],
+        },
+        "tops": {
+          "ns": [45,52],
+          "ew": [49,54]
+        }
       },
-      "tops": {
-        "ns": [45,52,32,43],
-        "ew": [49,54,38,47],
-        "all": [16,23,7,129]
+      "grey":{
+        "bottoms": {
+          "n": [85],
+          "e": [42],
+          "s": [37],
+          "w": [85],
+        },
+        "tops": {
+          "ns": [50,55],
+          "ew": [53,56]
+        }
+      },
+      "brown":{
+        "bottoms": {
+          "n": [131],
+          "e": [21],
+          "s": [14],
+          "w": [131],
+        },
+        "tops": {
+          "ns": [32,43],
+          "ew": [38,47]
+        }
+      },
+      "beige":{
+        "bottoms": {
+          "n": [130],
+          "e": [29],
+          "s": [22],
+          "w": [130],
+        },
+        "tops": {
+          "ns": [39,48],
+          "ew": [44,51]
+        }
+      },
+      "all":{
+        "roofs": {
+          "n": [59,64,66,73,75,77,89,91,105],
+          "e": [61,68,70,80,82,84,96,112],
+          "s": [58,63,65,72,74,76,88,90,104],
+          "w": [57,60,62,67,69,71,81,83,97,98],
+          "all": []
+        }
       }
     },
-    "grey": {
-      "bottoms": {
-        "n": [19,35,114],
-        "e": [3,12,28,42,93,100,107,116,124,29],
-        "s": [4,20,37,101,108,109,115,117,125,22],
-        "w": [11,27,85,122],
+    "commercial":{
+      "red":{
+        "bottoms": {
+          "n": [33,46,92],
+          "e": [1,9,17,26,41,99],
+          "s": [2,10,18,34,113,123],
+          "w": [25,40,106],
+        },
+        "tops": {
+          "ns": [16,23],
+          "ew": [16,23]
+        }
       },
-      "tops": {
-        "ns": [50,55,39,48],
-        "ew": [53,56,44,51],
-        "all": [24,31,8,15]
-      }
-    },
-    "all": {
-      "roofs": {
-        "n": [59,64,66,73,75,77,87,89,91,103,105],
-        "e": [61,68,70,80,82,84,94,96,98,110,112],
-        "s": [58,63,65,72,74,76,86,88,90,102,104],
-        "w": [57,60,62,67,69,71,79,81,83,95,97],
-        "all": [5,6,13,111,118,119,120,121,126,127,128],
+      "grey":{
+        "bottoms": {
+          "n": [19,35,85,114],
+          "e": [3,12,28,93,100,107,116,124],
+          "s": [4,20,101,108,109,115,117,125],
+          "w": [11,27,122],
+        },
+        "tops": {
+          "ns": [24,31],
+          "ew": [24,31]
+        }
+      },
+      "brown":{
+        "bottoms": {
+          "n": [131],
+          "e": [],
+          "s": [],
+          "w": [131],
+        },
+        "tops": {
+          "ns": [7,129],
+          "ew": [7,129]
+        }
+      },
+      "beige":{
+        "bottoms": {
+          "n": [130],
+          "e": [],
+          "s": [],
+          "w": [130],
+        },
+        "tops": {
+          "ns": [8,15],
+          "ew": [8,15]
+        }
+      },
+      "all":{
+        "roofs": {
+          "n": [87,103],
+          "e": [94,110],
+          "s": [86,102],
+          "w": [79,95],
+          "all": [5,6,13,111,118,119,120,121,127,128]
+        }
       }
     }
   }

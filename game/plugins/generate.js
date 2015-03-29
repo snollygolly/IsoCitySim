@@ -117,53 +117,61 @@ Generate.prototype = {
               if (tiles[l-1][i] != 66) {
                 //find eligible directories
                 var eligibleDirs = [];
-                if (ewTiles.indexOf(tiles[l-1][i]) != -1 && tiles[l-1][i - map.dimensions.cols] == 66 && tiles[l][i - map.dimensions.cols] === 0){eligibleDirs.push("s");}
-                if (nsTiles.indexOf(tiles[l-1][i]) != -1 && tiles[l-1][i + 1] == 66 && tiles[l][i + 1] === 0){eligibleDirs.push("w");}
-                if (ewTiles.indexOf(tiles[l-1][i]) != -1 && tiles[l-1][i + map.dimensions.cols] == 66 && tiles[l][i + map.dimensions.cols] === 0){eligibleDirs.push("n");}
-                if (nsTiles.indexOf(tiles[l-1][i]) != -1 && tiles[l-1][i - 1] == 66 && tiles[l][i - 1] === 0){eligibleDirs.push("e");}
+                if (ewTiles.indexOf(tiles[l-1][i]) != -1 && tiles[l-1][i - map.dimensions.cols] == 66){eligibleDirs.push("s");}
+                if (nsTiles.indexOf(tiles[l-1][i]) != -1 && tiles[l-1][i + 1] == 66){eligibleDirs.push("w");}
+                if (ewTiles.indexOf(tiles[l-1][i]) != -1 && tiles[l-1][i + map.dimensions.cols] == 66){eligibleDirs.push("n");}
+                if (nsTiles.indexOf(tiles[l-1][i]) != -1 && tiles[l-1][i - 1] == 66){eligibleDirs.push("e");}
                 //check to see what to do (draw the buildings)
                 if (eligibleDirs.indexOf("s") != -1){
                   //match the north side of the road
                   index = i - map.dimensions.cols;
-                  if (cType == "building"){
-                    var coords = this.getCoordsFromIndex(map, index);
-                    box = game.generate.generateBuilding("s", coords, heart);
-                    tiles = game.generate.mergePartial3DSafe(map, tiles, box, l, index);
-                  }else if (cType == "wall"){
-                    tiles[l-1][index] = game.tiles.walls.s[this.getRandomNumber(0, (game.tiles.walls.s.length - 1))];
+                  if (tiles[l][index] == 0){
+                    if (cType == "building"){
+                      var coords = this.getCoordsFromIndex(map, index);
+                      box = game.generate.generateBuilding("s", coords, heart);
+                      tiles = game.generate.mergePartial3DSafe(map, tiles, box, l, index);
+                    }else if (cType == "wall"){
+                      tiles[l-1][index] = game.tiles.walls.s[this.getRandomNumber(0, (game.tiles.walls.s.length - 1))];
+                    }
                   }
                 }
                 if (eligibleDirs.indexOf("e") != -1){
                   //match the west side of the road
                   index = i - 1;
-                  if (cType == "building"){
-                    var coords = this.getCoordsFromIndex(map, index);
-                    box = game.generate.generateBuilding("e", coords, heart);
-                    tiles = game.generate.mergePartial3DSafe(map, tiles, box, l, index);
-                  }else if (cType == "wall"){
-                    tiles[l-1][index] = game.tiles.walls.e[this.getRandomNumber(0, (game.tiles.walls.e.length - 1))];
+                  if (tiles[l][index] == 0){
+                    if (cType == "building"){
+                      var coords = this.getCoordsFromIndex(map, index);
+                      box = game.generate.generateBuilding("e", coords, heart);
+                      tiles = game.generate.mergePartial3DSafe(map, tiles, box, l, index);
+                    }else if (cType == "wall"){
+                      tiles[l-1][index] = game.tiles.walls.e[this.getRandomNumber(0, (game.tiles.walls.e.length - 1))];
+                    }
                   }
                 }
                 if (eligibleDirs.indexOf("w") != -1){
                   //match the east side of the road
                   index = i + 1;
-                  if (cType == "building"){
-                    var coords = this.getCoordsFromIndex(map, index);
-                    box = game.generate.generateBuilding("w", coords, heart);
-                    tiles = game.generate.mergePartial3DSafe(map, tiles, box, l, index);
-                  }else if (cType == "wall"){
-                    tiles[l-1][index] = game.tiles.walls.w[this.getRandomNumber(0, (game.tiles.walls.w.length - 1))];
+                  if (tiles[l][index] == 0){
+                    if (cType == "building"){
+                      var coords = this.getCoordsFromIndex(map, index);
+                      box = game.generate.generateBuilding("w", coords, heart);
+                      tiles = game.generate.mergePartial3DSafe(map, tiles, box, l, index);
+                    }else if (cType == "wall"){
+                      tiles[l-1][index] = game.tiles.walls.w[this.getRandomNumber(0, (game.tiles.walls.w.length - 1))];
+                    }
                   }
                 }
                 if (eligibleDirs.indexOf("n") != -1){
                   //match the south side of the road
                   index = i + map.dimensions.cols;
-                  if (cType == "building"){
-                    var coords = this.getCoordsFromIndex(map, index);
-                    box = game.generate.generateBuilding("n", coords, heart);
-                    tiles = game.generate.mergePartial3DSafe(map, tiles, box, l, index);
-                  }else if (cType == "wall"){
-                    tiles[l-1][index] = game.tiles.walls.n[this.getRandomNumber(0, (game.tiles.walls.n.length - 1))];
+                  if (tiles[l][index] == 0){
+                    if (cType == "building"){
+                      var coords = this.getCoordsFromIndex(map, index);
+                      box = game.generate.generateBuilding("n", coords, heart);
+                      tiles = game.generate.mergePartial3DSafe(map, tiles, box, l, index);
+                    }else if (cType == "wall"){
+                      tiles[l-1][index] = game.tiles.walls.n[this.getRandomNumber(0, (game.tiles.walls.n.length - 1))];
+                    }
                   }
                 }
               }

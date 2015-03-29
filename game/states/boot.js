@@ -74,7 +74,7 @@ Boot.prototype = {
     //set up groups
     game.layerManager.group = game.add.group();
     //generate the world
-    game.world.setBounds(0, 0, (map.dimensions.cols * 132), (map.dimensions.rows * 70));
+    game.world.setBounds(0, 0, (map.dimensions.cols * 132), (map.dimensions.rows * 74));
     game.camera.x = ((map.dimensions.cols * 132) / 2) - (1024 / 2);
     game.camera.y = ((map.dimensions.rows * 70) / 2) - (768 / 2);
     //generate all the layers
@@ -95,7 +95,7 @@ Boot.prototype = {
     //set up plugins and game
     game.plugins.add(new Phaser.Plugin.Isometric(game));
     game.physics.startSystem(Phaser.Plugin.Isometric.ISOARCADE);
-    game.iso.anchor.setTo(0.5, 0.1);
+    game.iso.anchor.setTo(0.5, 0.2);
   },
   create: function() {
     this.drawMap(map, game.layerManager.getAllTiles());

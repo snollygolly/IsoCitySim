@@ -12,8 +12,6 @@ Generate.prototype = {
   //chunks start here
   generateChunk: function(map, tiles){
     //this generates a chunk (20x20 block) according to rules we've defined
-    //THIS IS REQUIRED FOR SOME FUCKING WEIRD ASS REASON
-    tiles = JSON.parse(JSON.stringify(tiles));
     //this is where it happens.
     var HIGHWAY_WIDTH = game.tiles.highways.straight["n"].length + game.tiles.highways.edges["n"].length;
     //how much land undeveloped between highway and block
@@ -34,7 +32,7 @@ Generate.prototype = {
     var heart = {
       z_min: 2,
       z_max: 6,
-      radius: 3
+      radius: 2
     };
     //calculate some values
     heart.x = this.getRandomNumber((HIGHWAY_SINGLE_WIDTH + heart.radius), (map.units - HIGHWAY_SINGLE_WIDTH) - heart.radius);

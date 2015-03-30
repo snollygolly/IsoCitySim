@@ -2,90 +2,29 @@
 'use strict';
 
 var game;
-var map = {};
-var layer;
 var cursors;
 
-var size;
-var size_z;
-
 function Boot() {
-  //set up the map
-  //set up tile size
-  size = 74;
-  size_z = 32;
 
-  map = {};
-  //yes, i know all the sizing and z coords are crazy wacky
-  //do i know why these numbers seem to work? no
-  //do they work though? yes
-  //should i figure out why they are what they are? meh
-  map.layers = [
-    {
-      tileset: "landscape",
-      z: 0
-    },
-    {
-      tileset: "landscape",
-      z: size_z * 1
-    },
-    {
-      tileset: "city",
-      z: size_z * 1
-    },
-    {
-      tileset: "building",
-      z: size_z * 1
-    },
-    {
-      tileset: "building",
-      z: (size_z * 3) + 10
-    },
-    {
-      tileset: "building",
-      z: (size_z * 4) + 10
-    },
-    {
-      tileset: "building",
-      z: (size_z * 5) + 10
-    },
-    {
-      tileset: "building",
-      z: (size_z * 6) + 10
-    },
-    {
-      tileset: "building",
-      z: (size_z * 7) + 10
-    },
-    {
-      tileset: "building",
-      z: (size_z * 8) + 10
-    }
-  ];
-  map.dimensions = {
-    units: 20
-  };
 }
 
 Boot.prototype = {
   preload: function() {
     game = this.game;
-    //set up groups
-    game.layerManager.group = game.add.group();
     //generate the world
-    game.world.setBounds(0, 0, (map.dimensions.units * 132), (map.dimensions.units * 74));
-    game.camera.x = ((map.dimensions.units * 132) / 2) - (1024 / 2);
-    game.camera.y = ((map.dimensions.units * 70) / 2) - (768 / 2);
+    game.world.setBounds(0, 0, (game.worldManager.world.units * 132), (game.worldManager.world.units * 74));
+    game.camera.x = ((game.worldManager.world.units * 132) / 2) - (1024 / 2);
+    game.camera.y = ((game.worldManager.world.units * 70) / 2) - (768 / 2);
     //generate all the layers
-    var l = 0;
-    while (l < map.layers.length){
-      layer = game.layerManager.addLayer(map.layers[l].tileset, game.generate.generateMap(map, 0), map.layers[l].z);
-      l++;
-    }
-
+    game.worldManager.createWorld(game.generate.generateMap(game.worldManager.world, 0));
     //build the chunk!
-    game.layerManager.setAllTiles(game.generate.generateChunk(map, game.layerManager.getAllTiles()));
-
+    var c = 0;
+    while (c < game.worldManager.chunks.length){
+      var tiles = game.worldManager.getAllTiles(c);
+      tiles = game.generate.generateChunk(game.worldManager.world, tiles);
+      game.worldManager.setAllTiles(c, tiles);
+      c++;
+    }
 
     //other stuff?
     game.time.advancedTiming = true;
@@ -97,7 +36,7 @@ Boot.prototype = {
     game.iso.anchor.setTo(0.5, 0.2);
   },
   create: function() {
-    this.drawMap(map, game.layerManager.getAllTiles());
+    game.worldManager.drawWorld();
     cursors = game.input.keyboard.createCursorKeys();
   },
   update: function () {
@@ -124,39 +63,6 @@ Boot.prototype = {
     */
     game.debug.text(game.time.fps || '--', 2, 14, "#a7aebe");
     // game.debug.text(Phaser.VERSION, 2, game.world.height - 2, "#ffff00");
-  },
-  clearMap: function(){
-
-  },
-  drawMap: function(map, tiles){
-    //tiles in the layer
-    var i;
-    //layers in the map
-    var l = 0;
-    var tile;
-    //draw each layer, starting at 0
-    while (l < game.layerManager.layers.length){
-      //draw each tile in each layer
-      i = 0;
-      while (i < tiles[l].length){
-        var x = ((i % map.dimensions.units) * size);
-        var y = (Math.floor(i / map.dimensions.units) * size);
-        var z = game.layerManager.layers[l].z;
-        //add the tile
-        if (tiles[l][i] != 0){
-          tile = game.add.isoSprite(x, y, z, game.layerManager.layers[l].tileset, tiles[l][i], game.layerManager.layers[l].group);
-          tile.anchor.set(0.5, 1);
-          tile.smoothed = false;
-          tile.body.moves = false;
-
-          tile.scale.x = 1;
-          tile.scale.y = 1;
-        }
-        i++;
-      }
-      l++;
-      game.iso.simpleSort(game.layerManager.group);
-    }
   }
 };
 

@@ -38,8 +38,6 @@ Generate.prototype = {
   //chunks start here
   generateChunk: function(map, tiles){
     //this generates a chunk (20x20 block) according to rules we've defined
-    //THIS IS REQUIRED FOR SOME FUCKING WEIRD ASS REASON
-    tiles = JSON.parse(JSON.stringify(tiles));
     //this is where it happens.
     var HIGHWAY_WIDTH = game.tiles.highways.straight["n"].length + game.tiles.highways.edges["n"].length;
     //how much land undeveloped between highway and block
@@ -60,7 +58,7 @@ Generate.prototype = {
     var heart = {
       z_min: 2,
       z_max: 6,
-      radius: 3
+      radius: 2
     };
     //calculate some values
     heart.x = this.getRandomNumber((HIGHWAY_SINGLE_WIDTH + heart.radius), (map.units - HIGHWAY_SINGLE_WIDTH) - heart.radius);
@@ -817,9 +815,9 @@ function WorldManager(gameObj) {
 
 WorldManager.prototype = {
   world: {
-    layers: 20,
-    units: 20,
-    chunks: 5,
+    layers: 10,
+    units: 15,
+    chunks: 2,
     tile_size: 74,
     tile_size_z: 32
   },
@@ -899,7 +897,7 @@ WorldManager.prototype = {
       tiles[i] = this.chunks[chunk].tiles[i];
       i++;
     }
-    return tiles;
+    return JSON.parse(JSON.stringify(tiles));
   },
   setAllTiles: function(chunk, tiles){
     //pass it a full layers array and it makes it happen

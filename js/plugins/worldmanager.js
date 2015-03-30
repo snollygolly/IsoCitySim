@@ -10,9 +10,9 @@ function WorldManager(gameObj) {
 
 WorldManager.prototype = {
   world: {
-    layers: 20,
-    units: 20,
-    chunks: 5,
+    layers: 10,
+    units: 15,
+    chunks: 2,
     tile_size: 74,
     tile_size_z: 32
   },
@@ -92,7 +92,7 @@ WorldManager.prototype = {
       tiles[i] = this.chunks[chunk].tiles[i];
       i++;
     }
-    return tiles;
+    return JSON.parse(JSON.stringify(tiles));
   },
   setAllTiles: function(chunk, tiles){
     //pass it a full layers array and it makes it happen

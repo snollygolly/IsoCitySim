@@ -12,14 +12,16 @@ Generate.prototype = {
   //chunks start here
   generateChunk: function(map, tiles){
     //this generates a chunk (20x20 block) according to rules we've defined
+    //THIS IS REQUIRED FOR SOME FUCKING WEIRD ASS REASON
+    tiles = JSON.parse(JSON.stringify(tiles));
     //this is where it happens.
     var HIGHWAY_WIDTH = game.tiles.highways.straight["n"].length + game.tiles.highways.edges["n"].length;
     //how much land undeveloped between highway and block
     var HIGHWAY_EASEMENT = 2;
     var HIGHWAY_SINGLE_WIDTH = (HIGHWAY_WIDTH + HIGHWAY_EASEMENT) / 2;
     //only half of the highway width is used on each side, that equals a full one
-    var CITY_CHUNK_SPACE = map.dimensions.cols - (HIGHWAY_WIDTH + HIGHWAY_EASEMENT);
-    var CITY_START = (map.dimensions.cols * HIGHWAY_SINGLE_WIDTH) + HIGHWAY_SINGLE_WIDTH;
+    var CITY_CHUNK_SPACE = map.units - (HIGHWAY_WIDTH + HIGHWAY_EASEMENT);
+    var CITY_START = (map.units * HIGHWAY_SINGLE_WIDTH) + HIGHWAY_SINGLE_WIDTH;
     //road consts
     var ROAD_START_OFFSET = 4;
     var MIN_ROAD_SPLIT = 3;
@@ -35,8 +37,8 @@ Generate.prototype = {
       radius: 3
     };
     //calculate some values
-    heart.x = this.getRandomNumber((HIGHWAY_SINGLE_WIDTH + heart.radius), (map.dimensions.cols - HIGHWAY_SINGLE_WIDTH) - heart.radius);
-    heart.y = this.getRandomNumber((HIGHWAY_SINGLE_WIDTH + heart.radius), (map.dimensions.rows - HIGHWAY_SINGLE_WIDTH) - heart.radius);
+    heart.x = this.getRandomNumber((HIGHWAY_SINGLE_WIDTH + heart.radius), (map.units - HIGHWAY_SINGLE_WIDTH) - heart.radius);
+    heart.y = this.getRandomNumber((HIGHWAY_SINGLE_WIDTH + heart.radius), (map.units - HIGHWAY_SINGLE_WIDTH) - heart.radius);
     heart.x_min = heart.x - heart.radius;
     heart.x_max = heart.x + heart.radius;
     heart.y_min = heart.y - heart.radius;
@@ -49,12 +51,12 @@ Generate.prototype = {
       switch (l){
         case 0:
           //dirt, fill the entire chunk with dirt
-          rect = this.generateRect(map.dimensions.cols, map.dimensions.rows, 83);
+          rect = this.generateRect(map.units, map.units, 83);
           tiles[l] = this.mergePartial2D(map, tiles[l], rect, 0);
           break;
         case 1:
           //grass on dirt
-          rect = this.generateRect(map.dimensions.cols, map.dimensions.rows, 67);
+          rect = this.generateRect(map.units, map.units, 67);
           tiles[l] = this.mergePartial2D(map, tiles[l], rect, 0);
           break;
         case 2:
@@ -64,10 +66,10 @@ Generate.prototype = {
           //starting on 63 because that's the 4,4 after highway edges
           tiles[l] = this.mergePartial2DSafe(map, tiles[l], rect, CITY_START);
           //drawing highways
-          tiles[l] = this.generateHighway(map, tiles[l], 0, "s", ["e"], map.dimensions.rows);
-          tiles[l] = this.generateHighway(map, tiles[l], (map.dimensions.cols - (HIGHWAY_WIDTH / 2)), "s", ["w"], map.dimensions.rows);
-          tiles[l] = this.generateHighway(map, tiles[l], 0, "e", ["s"], map.dimensions.cols);
-          tiles[l] = this.generateHighway(map, tiles[l], ((map.dimensions.cols * map.dimensions.rows) - (map.dimensions.cols * (HIGHWAY_WIDTH / 2))), "e", ["n"], map.dimensions.cols);
+          tiles[l] = this.generateHighway(map, tiles[l], 0, "s", ["e"], map.units);
+          tiles[l] = this.generateHighway(map, tiles[l], (map.units - (HIGHWAY_WIDTH / 2)), "s", ["w"], map.units);
+          tiles[l] = this.generateHighway(map, tiles[l], 0, "e", ["s"], map.units);
+          tiles[l] = this.generateHighway(map, tiles[l], ((map.units * map.units) - (map.units * (HIGHWAY_WIDTH / 2))), "e", ["n"], map.units);
           //fix the highways
           tiles[l] = game.roads.fixHighways(map, tiles[l], "nw");
           tiles[l] = game.roads.fixHighways(map, tiles[l], "ne");
@@ -75,21 +77,21 @@ Generate.prototype = {
           tiles[l] = game.roads.fixHighways(map, tiles[l], "sw");
           //start to spawn the roads
           var x = this.getRandomNumber((ROAD_START_OFFSET + 1), (ROAD_START_OFFSET + 2));
-          while (x < (map.dimensions.cols - ROAD_START_OFFSET)){
+          while (x < (map.units - ROAD_START_OFFSET)){
             var index = this.getIndexFromCoords(map, x, HIGHWAY_EASEMENT)
-            tiles[l] = this.generateRoad(map, tiles[l], "city_plain", index, "s", map.dimensions.rows - HIGHWAY_EASEMENT);
+            tiles[l] = this.generateRoad(map, tiles[l], "city_plain", index, "s", map.units - HIGHWAY_EASEMENT);
             //cap the highways
             tiles[l] = game.roads.joinRoadHighway(map, tiles[l], x, HIGHWAY_EASEMENT, "n");
-            tiles[l] = game.roads.joinRoadHighway(map, tiles[l], x, map.dimensions.rows - 1, "s");
+            tiles[l] = game.roads.joinRoadHighway(map, tiles[l], x, map.units - 1, "s");
             x += this.getRandomNumber(MIN_ROAD_SPLIT, MAX_ROAD_SPLIT);
           }
           var y = this.getRandomNumber((ROAD_START_OFFSET + 1), (ROAD_START_OFFSET + 2));
-          while (y < (map.dimensions.rows - ROAD_START_OFFSET)){
+          while (y < (map.units - ROAD_START_OFFSET)){
             var index = this.getIndexFromCoords(map, HIGHWAY_EASEMENT, y)
-            tiles[l] = this.generateRoad(map, tiles[l], "city_plain", index, "e", map.dimensions.rows - HIGHWAY_EASEMENT);
+            tiles[l] = this.generateRoad(map, tiles[l], "city_plain", index, "e", map.units - HIGHWAY_EASEMENT);
             //cap the highways
             tiles[l] = game.roads.joinRoadHighway(map, tiles[l], HIGHWAY_EASEMENT, y, "w");
-            tiles[l] = game.roads.joinRoadHighway(map, tiles[l], map.dimensions.cols - 1, y, "e");
+            tiles[l] = game.roads.joinRoadHighway(map, tiles[l], map.units - 1, y, "e");
             y += this.getRandomNumber(MIN_ROAD_SPLIT, MAX_ROAD_SPLIT);
           }
           //road magic!
@@ -115,16 +117,16 @@ Generate.prototype = {
                 cType = "building"
               }
               if (tiles[l-1][i] != 66) {
-                //find eligible directories
+                //find eligible directions
                 var eligibleDirs = [];
-                if (ewTiles.indexOf(tiles[l-1][i]) != -1 && tiles[l-1][i - map.dimensions.cols] == 66){eligibleDirs.push("s");}
+                if (ewTiles.indexOf(tiles[l-1][i]) != -1 && tiles[l-1][i - map.units] == 66){eligibleDirs.push("s");}
                 if (nsTiles.indexOf(tiles[l-1][i]) != -1 && tiles[l-1][i + 1] == 66){eligibleDirs.push("w");}
-                if (ewTiles.indexOf(tiles[l-1][i]) != -1 && tiles[l-1][i + map.dimensions.cols] == 66){eligibleDirs.push("n");}
+                if (ewTiles.indexOf(tiles[l-1][i]) != -1 && tiles[l-1][i + map.units] == 66){eligibleDirs.push("n");}
                 if (nsTiles.indexOf(tiles[l-1][i]) != -1 && tiles[l-1][i - 1] == 66){eligibleDirs.push("e");}
                 //check to see what to do (draw the buildings)
                 if (eligibleDirs.indexOf("s") != -1){
                   //match the north side of the road
-                  index = i - map.dimensions.cols;
+                  index = i - map.units;
                   if (tiles[l][index] == 0){
                     if (cType == "building"){
                       var coords = this.getCoordsFromIndex(map, index);
@@ -163,7 +165,7 @@ Generate.prototype = {
                 }
                 if (eligibleDirs.indexOf("n") != -1){
                   //match the south side of the road
-                  index = i + map.dimensions.cols;
+                  index = i + map.units;
                   if (tiles[l][index] == 0){
                     if (cType == "building"){
                       var coords = this.getCoordsFromIndex(map, index);
@@ -203,16 +205,16 @@ Generate.prototype = {
         var index = ((direction == "e") ? (start + i) : (start -1) );
         var c = 0;
         if (half.indexOf("n") != -1){
-          tiles[index + (map.dimensions.cols * c++)] = fullSlice[0];
-          tiles[index + (map.dimensions.cols * c++)] = fullSlice[1];
+          tiles[index + (map.units * c++)] = fullSlice[0];
+          tiles[index + (map.units * c++)] = fullSlice[1];
         }
         if (half.indexOf("s") != -1){
-          tiles[index + (map.dimensions.cols * c++)] = fullSlice[2];
-          tiles[index + (map.dimensions.cols * c++)] = fullSlice[3];
+          tiles[index + (map.units * c++)] = fullSlice[2];
+          tiles[index + (map.units * c++)] = fullSlice[3];
         }
       }else if (direction == "n" || direction == "s"){
         //everything is same except the offset
-        var index = ((direction == "s") ? (start + (map.dimensions.cols * i)) : (start - (map.dimensions.cols * i)));
+        var index = ((direction == "s") ? (start + (map.units * i)) : (start - (map.units * i)));
         var c = 0;
         if (half.indexOf("w") != -1){
           tiles[index + (c++)] = fullSlice[0];
@@ -242,7 +244,7 @@ Generate.prototype = {
     while (i < length){
       switch (direction) {
         case "n":
-          tiles[start - (map.dimensions.cols * i)] = road;
+          tiles[start - (map.units * i)] = road;
           break;
         case "e":
           tiles[start + i] = road;
@@ -251,7 +253,7 @@ Generate.prototype = {
           tiles[start - i] = road;
           break;
         case "s":
-          tiles[start + (map.dimensions.cols * i)] = road;
+          tiles[start + (map.units * i)] = road;
           break;
       }
       i++;
@@ -326,7 +328,7 @@ Generate.prototype = {
     //generates a blank map based on dimensions
     var i = 0;
     var tiles = [];
-    while (i < (map.dimensions.cols * map.dimensions.rows)){
+    while (i < (map.units * map.units)){
       tiles[i] = fill;
       i++;
     }
@@ -394,9 +396,9 @@ Generate.prototype = {
     //partial should consist of an array of arrays, one array per row
     while (i < partial.length){
       //remove items from the array
-      tiles.splice(index + (map.dimensions.cols * i), partial[i].length);
+      tiles.splice(index + (map.units * i), partial[i].length);
       //remove items from the array
-      tiles.splice.apply(tiles, [index + (map.dimensions.cols * i), 0].concat(partial[i]));
+      tiles.splice.apply(tiles, [index + (map.units * i), 0].concat(partial[i]));
       i++;
     }
     return tiles;
@@ -423,7 +425,7 @@ Generate.prototype = {
       while (j < partial[i].length){
         if (partial[i][j] != 0){
           //there's some content here we want to merge
-          tiles[index + (map.dimensions.cols * i) + j] = partial[i][j];
+          tiles[index + (map.units * i) + j] = partial[i][j];
         }
         j++;
       }
@@ -445,8 +447,8 @@ Generate.prototype = {
   getCoordsFromIndex: function(map, index){
     //1,1 is top left corner
     //give it the index of the tile you want and get the x,y coords
-    var y = Math.floor(index / map.dimensions.rows);
-    var x = index - (y * map.dimensions.cols);
+    var y = Math.floor(index / map.units);
+    var x = index - (y * map.units);
     return {
       x: x + 1,
       y: y + 1
@@ -456,7 +458,7 @@ Generate.prototype = {
     //1,1 is top left corner
     //give it the x / y of the tile you want, and it'll give you its index in the array
     var xOffset = x - 1;
-    var yOffset = (y - 1) * map.dimensions.cols;
+    var yOffset = (y - 1) * map.units;
     return xOffset + yOffset;
   },
   getRandomNumber: function(min, max){

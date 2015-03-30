@@ -12,9 +12,11 @@ Boot.prototype = {
   preload: function() {
     game = this.game;
     //generate the world
-    game.world.setBounds(0, 0, (game.worldManager.world.units * 132), (game.worldManager.world.units * 74));
-    game.camera.x = ((game.worldManager.world.units * 132) / 2) - (1024 / 2);
-    game.camera.y = ((game.worldManager.world.units * 70) / 2) - (768 / 2);
+    var wPx = game.worldManager.world.chunks * (game.worldManager.world.units * 132);
+    var hPx = game.worldManager.world.chunks * (game.worldManager.world.units * 74);
+    game.world.setBounds(0, 0, wPx, hPx);
+    game.camera.x = (wPx / 2) - (1024 / 2);
+    game.camera.y = (hPx / 2) - (768 / 2);
     //generate all the layers
     game.worldManager.createWorld(game.generate.generateMap(game.worldManager.world, 0));
     //build the chunk!

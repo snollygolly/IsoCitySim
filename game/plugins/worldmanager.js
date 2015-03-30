@@ -10,59 +10,51 @@ function WorldManager(gameObj) {
 
 WorldManager.prototype = {
   world: {
-    units: 5,
-    chunks: 2,
+    layers: 20,
+    units: 20,
+    chunks: 5,
     tile_size: 74,
     tile_size_z: 32
   },
   layers: [
-    {
-      tileset: "landscape",
-      z: 0
-    },
-    {
-      tileset: "landscape",
-      z: this.tile_size_z * 1
-    },
-    {
-      tileset: "city",
-      z: this.tile_size_z * 1
-    },
-    {
-      tileset: "building",
-      z: this.tile_size_z * 1
-    },
-    {
-      tileset: "building",
-      z: (this.tile_size_z * 3) + 10
-    },
-    {
-      tileset: "building",
-      z: (this.tile_size_z * 4) + 10
-    },
-    {
-      tileset: "building",
-      z: (this.tile_size_z * 5) + 10
-    },
-    {
-      tileset: "building",
-      z: (this.tile_size_z * 6) + 10
-    },
-    {
-      tileset: "building",
-      z: (this.tile_size_z * 7) + 10
-    },
-    {
-      tileset: "building",
-      z: (this.tile_size_z * 8) + 10
-    }
+
   ],
   chunks: [
 
   ],
+  buildLayers: function(layers){
+    var l = 0;
+    while (l < layers){
+      var layer = {};
+      switch (l){
+        case 0:
+          layer.tileset = "landscape";
+          layer.z = 0;
+          break;
+        case 1:
+          layer.tileset = "landscape";
+          layer.z = this.world.tile_size_z * 1;
+          break;
+        case 2:
+          layer.tileset = "city";
+          layer.z = this.world.tile_size_z * 1;
+          break;
+        case 3:
+          layer.tileset = "building";
+          layer.z = this.world.tile_size_z * 1;
+          break;
+        default:
+          layer.tileset = "building";
+          layer.z = (this.world.tile_size_z * (l - 1)) + 10;
+          break;
+      }
+      this.layers.push(layer);
+      l++;
+    }
+  },
   createWorld: function(tiles){
     //add a layer at a specific index with name and z level
-    //group: game.add.group(),
+    this.buildLayers(this.world.layers);
     var c = 0;
     var chunk;
     while (c < Math.pow(this.world.chunks, 2)){

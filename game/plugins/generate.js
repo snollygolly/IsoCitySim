@@ -53,7 +53,6 @@ Generate.prototype = {
           //dirt, fill the entire chunk with dirt
           rect = this.generateRect(map.units, map.units, 83);
           tiles[l] = this.mergePartial2D(map, tiles[l], rect, 0);
-          return tiles;
           break;
         case 1:
           //grass on dirt

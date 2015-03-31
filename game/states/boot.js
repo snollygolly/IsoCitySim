@@ -3,9 +3,16 @@
 
 var game;
 var cursors;
+var rS;
 
 function Boot() {
-
+  rS = new rStats( {
+    values: {
+        fps: { caption: 'Framerate (FPS)' },
+        update: { caption: 'Total update time (ms)' },
+        render: { caption: 'Total render time (ms)' }
+    }
+  } );
 }
 
 Boot.prototype = {
@@ -42,6 +49,10 @@ Boot.prototype = {
     cursors = game.input.keyboard.createCursorKeys();
   },
   update: function () {
+    rS( 'FPS' ).frame();
+    rS( 'update' ).start();
+    //trigger the frame for anyone watching
+    rS().update();
     //this is how scaling is done, but this code is super rough
     //isoGroup.scale.setTo(2,2);
     if (cursors.right.isDown){
@@ -56,15 +67,19 @@ Boot.prototype = {
     if (cursors.up.isDown){
       game.camera.y -= 10;
     }
+    rS( 'update' ).end();
   },
   render: function () {
+    rS( 'render' ).start();
     /*
     isoGroup.forEach(function (tile) {
         //game.debug.body(tile, 'rgba(189, 221, 235, 0.6)', false);
     });
     */
-    game.debug.text(game.time.fps || '--', 2, 14, "#a7aebe");
+    //game.debug.text(game.time.fps || '--', 2, 14, "#a7aebe");
     // game.debug.text(Phaser.VERSION, 2, game.world.height - 2, "#ffff00");
+    rS( 'render' ).end();
+    rS().update();
   }
 };
 

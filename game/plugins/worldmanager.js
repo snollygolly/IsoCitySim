@@ -11,8 +11,8 @@ function WorldManager(gameObj) {
 WorldManager.prototype = {
   world: {
     layers: 10,
-    units: 15,
-    chunks: 2,
+    units: 20,
+    chunks: 4,
     tile_size: 74,
     tile_size_z: 32
   },
@@ -68,8 +68,8 @@ WorldManager.prototype = {
     chunk.x = (this.world.units * this.world.tile_size) * (c % this.world.chunks);
     chunk.y = (this.world.units * this.world.tile_size) * (Math.floor(c / this.world.chunks));
     var group = game.add.group();
-    group.enableBody = true;
-    group.physicsBodyType = Phaser.Plugin.Isometric.ISOARCADE;
+    //group.enableBody = true;
+    //group.physicsBodyType = Phaser.Plugin.Isometric.ISOARCADE;
     return {
       group: group,
       chunk: chunk,
@@ -102,6 +102,12 @@ WorldManager.prototype = {
       l++;
     }
   },
+  cleanWorld: function(){
+
+  },
+  cleanChunk: function(){
+
+  },
   clearWorld: function(){
 
   },
@@ -117,12 +123,15 @@ WorldManager.prototype = {
   },
   drawChunk: function(c){
     //tiles in the layer
+    var totalChunk = 0;
+    var totalLayer = 0;
     var i;
     //layers in the map
     var l = 0;
     var tile;
     //draw each layer, starting at 0
     while (l < this.chunks[c].tiles.length){
+      totalLayer = 0;
       //draw each tile in each layer
       i = 0;
       while (i < this.chunks[c].tiles[l].length){
@@ -134,16 +143,21 @@ WorldManager.prototype = {
           tile = game.add.isoSprite(x, y, z, this.layers[l].tileset, this.chunks[c].tiles[l][i], this.chunks[c].group);
           tile.anchor.set(0.5, 1);
           tile.smoothed = false;
-          tile.body.moves = false;
+          //tile.body.moves = false;
 
           tile.scale.x = 1;
           tile.scale.y = 1;
+
+          totalChunk++;
+          totalLayer++;
         }
         i++;
       }
+      console.log("chunk " + c + " - layer: " + l + " - total spawned: " + totalLayer);
       l++;
       game.iso.simpleSort(this.chunks[c].group);
     }
+    console.log("chunk " + c + " - total spawned: " + totalChunk);
   }
 };
 

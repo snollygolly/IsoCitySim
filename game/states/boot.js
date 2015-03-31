@@ -32,6 +32,7 @@ Boot.prototype = {
       var tiles = game.worldManager.getAllTiles(c);
       tiles = game.generate.generateChunk(game.worldManager.world, tiles);
       game.worldManager.setAllTiles(c, tiles);
+      game.worldManager.cleanWorld();
       c++;
     }
 

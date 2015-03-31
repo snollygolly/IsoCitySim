@@ -103,10 +103,24 @@ WorldManager.prototype = {
     }
   },
   cleanWorld: function(){
-
+    var c = 0;
+    while (c < this.chunks.length){
+      this.cleanChunk(c);
+      c++;
+    }
   },
-  cleanChunk: function(){
-
+  cleanChunk: function(c){
+    var i = 0;
+    while (i < this.chunks[c].tiles[0].length){
+      if (this.chunks[c].tiles[3][i] != 0){
+        //the top most layer has tiles, everything under it is dead
+        this.chunks[c].tiles[2][i] = 0;
+        this.chunks[c].tiles[1][i] = 0
+      }else if (this.chunks[c].tiles[2][i] != 0){
+        this.chunks[c].tiles[1][i] = 0
+      }
+      i++;
+    }
   },
   clearWorld: function(){
 

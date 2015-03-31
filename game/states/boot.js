@@ -40,6 +40,7 @@ Boot.prototype = {
     game.time.advancedTiming = true;
     game.debug.renderShadow = false;
     game.stage.disableVisibilityChange = true;
+    game.stage.smoothed = false;
     //set up plugins and game
     game.plugins.add(new Phaser.Plugin.Isometric(game));
     game.physics.startSystem(Phaser.Plugin.Isometric.ISOARCADE);

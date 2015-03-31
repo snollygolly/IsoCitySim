@@ -2,7 +2,7 @@
 
 //global variables
 window.onload = function () {
-  var game = new Phaser.Game(1024, 768, Phaser.AUTO, 'isocitysim', null, true, false);
+  var game = new Phaser.Game(1024, 768, Phaser.AUTO, 'isocitysim', null, false, false);
   var Roads = require('./plugins/Roads');
   var Generate = require('./plugins/Generate');
   var WorldManager = require('./plugins/WorldManager');

@@ -32,16 +32,12 @@ WorldManager.prototype = {
           layer.z = 0;
           break;
         case 1:
-          layer.tileset = "landscape";
-          layer.z = this.world.tile_size_z * 1;
+          layer.tileset = "city";
+          layer.z = 0;
           break;
         case 2:
-          layer.tileset = "city";
-          layer.z = this.world.tile_size_z * 1;
-          break;
-        case 3:
           layer.tileset = "building";
-          layer.z = this.world.tile_size_z * 1;
+          layer.z = 0;
           break;
         default:
           layer.tileset = "building";
@@ -111,13 +107,14 @@ WorldManager.prototype = {
   },
   cleanChunk: function(c){
     var i = 0;
-    while (i < this.chunks[c].tiles[0].length){
-      if (this.chunks[c].tiles[3][i] != 0){
+    var arrLen = this.chunks[c].tiles[0].length;
+    while (i < arrLen){
+      if (this.chunks[c].tiles[2][i] != 0){
         //the top most layer has tiles, everything under it is dead
-        this.chunks[c].tiles[2][i] = 0;
-        this.chunks[c].tiles[1][i] = 0
-      }else if (this.chunks[c].tiles[2][i] != 0){
-        this.chunks[c].tiles[1][i] = 0
+        this.chunks[c].tiles[1][i] = 0;
+        this.chunks[c].tiles[0][i] = 0
+      }else if (this.chunks[c].tiles[1][i] != 0){
+        this.chunks[c].tiles[0][i] = 0
       }
       i++;
     }

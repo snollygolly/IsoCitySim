@@ -44,20 +44,15 @@ Generate.prototype = {
     //start the looping for layers
     var l = 0;
     var rect, box;
-    //this is hardcoded for now, may change, may not, buildings start on 3
+    //this is hardcoded for now, may change, may not, buildings start on 2
     while (l < 4){
       switch (l){
         case 0:
-          //dirt, fill the entire chunk with dirt
-          rect = this.generateRect(map.units, map.units, 83);
-          tiles[l] = this.mergePartial2D(map, tiles[l], rect, 0);
-          break;
-        case 1:
           //grass on dirt
           rect = this.generateRect(map.units, map.units, 67);
           tiles[l] = this.mergePartial2D(map, tiles[l], rect, 0);
           break;
-        case 2:
+        case 1:
           //this spawns paved areas
           //14 because the highway takes up 3 on each edge, this will probably change
           rect = this.generateRect(CITY_CHUNK_SPACE, CITY_CHUNK_SPACE, 66);
@@ -95,7 +90,7 @@ Generate.prototype = {
           //road magic!
           tiles[l] = game.roads.fixRoads(map, tiles[l], "city_plain");
           break;
-        case 3:
+        case 2:
           //start to generate buildings
           var ewTiles = game.roads.getIndices(["e", "w"]);
           var nsTiles = game.roads.getIndices(["n", "s"]);

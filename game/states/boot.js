@@ -58,6 +58,7 @@ Boot.prototype = {
     //this is how scaling is done, but this code is super rough
     //isoGroup.scale.setTo(2,2);
     if (cursors.right.isDown){
+      this.moveCamera(0,0);
       game.camera.x += 10;
     }
     if (cursors.left.isDown){
@@ -73,15 +74,64 @@ Boot.prototype = {
   },
   render: function () {
     rS( 'render' ).start();
-    /*
-    isoGroup.forEach(function (tile) {
-        //game.debug.body(tile, 'rgba(189, 221, 235, 0.6)', false);
-    });
-    */
-    //game.debug.text(game.time.fps || '--', 2, 14, "#a7aebe");
-    // game.debug.text(Phaser.VERSION, 2, game.world.height - 2, "#ffff00");
+
     rS( 'render' ).end();
     rS().update();
+  },
+  moveCamera: function(x, y){
+    //var isoCam = game.iso.unproject(game.world.camera.view);
+    var isoCam = game.world.camera.view;
+    var isoChunk = game.worldManager.chunks[0];
+    //console.log("camera: x: " + isoCam.x + " y: " + isoCam.y);
+    //console.log("chunk: t: " + isoChunk.top + " l: " + isoChunk.left);
+    var viewport = {
+      left: isoCam.x,
+      right: isoCam.x + 1024,
+      top: isoCam.y,
+      bottom: isoCam.y + 768
+    };
+    // var chunkBounds = game.worldManager.chunks[0].group.getBounds();
+    // var isoChunk = game.iso.unproject(game.worldManager.chunks[0].group);
+    // var chunk = {
+    //   left: isoChunk.x,
+    //   right: isoChunk.x + chunkBounds.width,
+    //   top: isoChunk.y,
+    //   bottom: isoChunk.y + chunkBounds.height
+    // };
+    if (intersectRect(isoChunk, viewport) === true){
+      //game.worldManager.chunks[i].group.visible = true;
+      console.log("chunk : " + 0 + " is visible");
+    }else{
+      //game.worldManager.chunks[i].group.visible = false;
+      console.log("chunk : " + 0 + " is invisible");
+    }
+    return;
+    var i = 0;
+    while (i < game.worldManager.chunks.length){
+      //if (intersectRect(game.worldManager.chunks[i].group.getBounds(), game.world.camera.screenView) === true){
+      if (intersectRect(game.worldManager.chunks[i].group.getBounds(), game.world.camera.view) === true){
+        //do something
+        game.worldManager.chunks[i].group.visible = true;
+        console.log("chunk : " + i + " is visible");
+        //console.log(game.worldManager.chunks[i]);
+      }else{
+        game.worldManager.chunks[i].group.visible = false;
+        console.log("chunk : " + i + " is invisible");
+      }
+      i++;
+    }
+    //functions
+    function intersectRect(r1, r2) {
+      console.log("intersect: (chunk / camera)");
+      console.log("camera.left (" + r2.left + ") > chunk.right (" + r1.right + ") - [" + ((r2.left > r1.right)?"bad":"good") + "]");
+      console.log("camera.right (" + r2.right + ") > chunk.left (" + r1.left + ") - [" + ((r2.right < r1.left)?"bad":"good") + "]");
+      console.log("camera.top (" + r2.top + ") > chunk.bottom (" + r1.bottom + ") - [" + ((r2.top > r1.bottom)?"bad":"good") + "]");
+      console.log("camera.bottom (" + r2.bottom + ") > chunk.top (" + r1.top + ") - [" + ((r2.bottom < r1.top)?"bad":"good") + "]");
+      return !(r2.left > r1.right ||
+               r2.right < r1.left ||
+               r2.top > r1.bottom ||
+               r2.bottom < r1.top);
+    }
   }
 };
 

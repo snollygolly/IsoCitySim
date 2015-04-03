@@ -63,11 +63,13 @@ WorldManager.prototype = {
     var chunk = {};
     chunk.x = (this.world.units * this.world.tile_size) * (c % this.world.chunks);
     chunk.y = (this.world.units * this.world.tile_size) * (Math.floor(c / this.world.chunks));
-    var group = game.add.group();
-    //group.enableBody = true;
-    //group.physicsBodyType = Phaser.Plugin.Isometric.ISOARCADE;
+    //set up cardinal directions for bounds checking
+    chunk.left = chunk.x;
+    chunk.right = chunk.left + (this.world.units * this.world.tile_size);
+    chunk.top = chunk.y;
+    chunk.bottom = chunk.top + (this.world.units * this.world.tile_size);
     return {
-      group: group,
+      group: game.add.group(),
       chunk: chunk,
       tiles: this.createTiles(tiles)
     };
@@ -127,22 +129,22 @@ WorldManager.prototype = {
   },
   drawWorld: function(){
     var c = 0;
+    var sprites = 0;
     while (c < this.chunks.length){
-      this.drawChunk(c);
+      sprites += this.drawChunk(c);
       c++;
     }
+    console.log("Finished drawing world: " + sprites + " drawn!");
   },
   drawChunk: function(c){
     //tiles in the layer
-    var totalChunk = 0;
-    var totalLayer = 0;
+    var totalSprites = 0;
     var i;
     //layers in the map
     var l = 0;
     var tile;
     //draw each layer, starting at 0
     while (l < this.chunks[c].tiles.length){
-      totalLayer = 0;
       //draw each tile in each layer
       i = 0;
       while (i < this.chunks[c].tiles[l].length){
@@ -154,21 +156,35 @@ WorldManager.prototype = {
           tile = game.add.isoSprite(x, y, z, this.layers[l].tileset, this.chunks[c].tiles[l][i], this.chunks[c].group);
           tile.anchor.set(0.5, 1);
           tile.smoothed = false;
-          //tile.body.moves = false;
-
           tile.scale.x = 1;
           tile.scale.y = 1;
-
-          totalChunk++;
-          totalLayer++;
+          if (l == 0 || l == 1 || l == 2){
+            if (i == 0){
+              //set top of chunk
+              this.chunks[c].top = tile.y;
+            }
+            else if (i == (this.world.units - 1)){
+              //set right of chunk
+              this.chunks[c].right = tile.x;
+            }
+            else if (i == (this.world.units * (this.world.units - 1))){
+              //set left of chunk
+              this.chunks[c].left = tile.x;
+            }
+            else if (i == (this.world.units * this.world.units) - 1){
+              //set bottom of chunk
+              console.log("setting chunk: " + c + " bottom to: " + tile.y);
+              this.chunks[c].bottom = tile.y;
+            }
+          }
+          totalSprites++;
         }
         i++;
       }
-      console.log("chunk " + c + " - layer: " + l + " - total spawned: " + totalLayer);
       l++;
       game.iso.simpleSort(this.chunks[c].group);
     }
-    console.log("chunk " + c + " - total spawned: " + totalChunk);
+    return totalSprites;
   }
 };
 

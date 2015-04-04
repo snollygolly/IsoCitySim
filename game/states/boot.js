@@ -78,16 +78,19 @@ Boot.prototype = {
     rS().update();
   },
   moveCamera: function(x, y){
+    //set the camera first
     game.world.camera.setPosition(x,y);
+    //get the real world view coords of the cam
     var isoCam = game.world.camera.view;
-
+    //make a rectangle out of them
+    //TODO: change resolution to consts
     var viewport = {
       left: isoCam.x,
       right: isoCam.x + 1024,
       top: isoCam.y,
       bottom: isoCam.y + 768
     };
-
+    //go through each chunk, and check to see if it's in frame or not
     var i = 0;
     while (i < game.worldManager.chunks.length){
       if (intersectRect(game.worldManager.chunks[i], viewport) === true){

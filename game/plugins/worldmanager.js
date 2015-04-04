@@ -158,6 +158,7 @@ WorldManager.prototype = {
           tile.smoothed = false;
           tile.scale.x = 1;
           tile.scale.y = 1;
+          //TODO: refactor me, i can probably be made to be faster
           if (l == 0 || l == 1 || l == 2){
             if (i == 0){
               //set top of chunk

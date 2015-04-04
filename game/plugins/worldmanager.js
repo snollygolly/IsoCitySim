@@ -161,19 +161,18 @@ WorldManager.prototype = {
           if (l == 0 || l == 1 || l == 2){
             if (i == 0){
               //set top of chunk
-              this.chunks[c].top = tile.y;
+              this.chunks[c].top = tile.y - this.world.tile_size;
             }
             else if (i == (this.world.units - 1)){
               //set right of chunk
-              this.chunks[c].right = tile.x;
+              this.chunks[c].right = tile.x - (this.world.tile_size / 2);
             }
             else if (i == (this.world.units * (this.world.units - 1))){
               //set left of chunk
-              this.chunks[c].left = tile.x;
+              this.chunks[c].left = tile.x + (this.world.tile_size / 2);
             }
             else if (i == (this.world.units * this.world.units) - 1){
               //set bottom of chunk
-              console.log("setting chunk: " + c + " bottom to: " + tile.y);
               this.chunks[c].bottom = tile.y;
             }
           }

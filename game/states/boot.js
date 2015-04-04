@@ -2,160 +2,118 @@
 'use strict';
 
 var game;
-var map = {};
-var layer;
 var cursors;
-
-var size;
-var size_z;
+var rS;
+var wPx, hPx;
 
 function Boot() {
-  //set up the map
-  //set up tile size
-  size = 74;
-  size_z = 32;
-
-  map = {};
-  //yes, i know all the sizing and z coords are crazy wacky
-  //do i know why these numbers seem to work? no
-  //do they work though? yes
-  //should i figure out why they are what they are? meh
-  map.layers = [
-    {
-      tileset: "landscape",
-      z: 0
-    },
-    {
-      tileset: "landscape",
-      z: size_z * 1
-    },
-    {
-      tileset: "city",
-      z: size_z * 1
-    },
-    {
-      tileset: "building",
-      z: size_z * 1
-    },
-    {
-      tileset: "building",
-      z: (size_z * 3) + 10
-    },
-    {
-      tileset: "building",
-      z: (size_z * 4) + 10
-    },
-    {
-      tileset: "building",
-      z: (size_z * 5) + 10
-    },
-    {
-      tileset: "building",
-      z: (size_z * 6) + 10
-    },
-    {
-      tileset: "building",
-      z: (size_z * 7) + 10
-    },
-    {
-      tileset: "building",
-      z: (size_z * 8) + 10
+  rS = new rStats( {
+    values: {
+        fps: { caption: 'Framerate (FPS)' },
+        update: { caption: 'Total update time (ms)' },
+        render: { caption: 'Total render time (ms)' }
     }
-  ];
-  map.dimensions = {
-    units: 20
-  };
+  } );
 }
 
 Boot.prototype = {
   preload: function() {
     game = this.game;
-    //set up groups
-    game.layerManager.group = game.add.group();
     //generate the world
-    game.world.setBounds(0, 0, (map.dimensions.units * 132), (map.dimensions.units * 74));
-    game.camera.x = ((map.dimensions.units * 132) / 2) - (1024 / 2);
-    game.camera.y = ((map.dimensions.units * 70) / 2) - (768 / 2);
+    wPx = game.worldManager.world.chunks * (game.worldManager.world.units * 132);
+    hPx = game.worldManager.world.chunks * (game.worldManager.world.units * 74);
+    game.world.setBounds(0, 0, wPx, hPx);
     //generate all the layers
-    var l = 0;
-    while (l < map.layers.length){
-      layer = game.layerManager.addLayer(map.layers[l].tileset, game.generate.generateMap(map, 0), map.layers[l].z);
-      l++;
-    }
-
+    game.worldManager.createWorld(game.generate.generateMap(game.worldManager.world, 0));
     //build the chunk!
-    game.layerManager.setAllTiles(game.generate.generateChunk(map, game.layerManager.getAllTiles()));
-
+    var c = 0;
+    while (c < game.worldManager.chunks.length){
+      var tiles = game.worldManager.getAllTiles(c);
+      tiles = game.generate.generateChunk(game.worldManager.world, tiles);
+      game.worldManager.setAllTiles(c, tiles);
+      game.worldManager.cleanWorld();
+      c++;
+    }
 
     //other stuff?
     game.time.advancedTiming = true;
     game.debug.renderShadow = false;
     game.stage.disableVisibilityChange = true;
+    game.stage.smoothed = false;
     //set up plugins and game
     game.plugins.add(new Phaser.Plugin.Isometric(game));
     game.physics.startSystem(Phaser.Plugin.Isometric.ISOARCADE);
-    game.iso.anchor.setTo(0.5, 0.2);
+    game.iso.anchor.setTo(0.5, 0.1);
   },
   create: function() {
-    this.drawMap(map, game.layerManager.getAllTiles());
+    game.worldManager.drawWorld();
     cursors = game.input.keyboard.createCursorKeys();
+    this.moveCamera((wPx / 2) - (1024 / 2), (hPx / 2) - (768 / 2));
   },
   update: function () {
+    rS( 'FPS' ).frame();
+    rS( 'update' ).start();
+    //trigger the frame for anyone watching
+    rS().update();
     //this is how scaling is done, but this code is super rough
     //isoGroup.scale.setTo(2,2);
     if (cursors.right.isDown){
-      game.camera.x += 10;
+      this.moveCamera((game.world.camera.x + 10), game.world.camera.y);
     }
     if (cursors.left.isDown){
-      game.camera.x -= 10;
+      this.moveCamera((game.world.camera.x - 10), game.world.camera.y);
     }
     if (cursors.down.isDown){
-      game.camera.y += 10;
+      this.moveCamera(game.world.camera.x, (game.world.camera.y + 10));
     }
     if (cursors.up.isDown){
-      game.camera.y -= 10;
+      this.moveCamera(game.world.camera.x, (game.world.camera.y - 10));
     }
+    rS( 'update' ).end();
   },
   render: function () {
-    /*
-    isoGroup.forEach(function (tile) {
-        //game.debug.body(tile, 'rgba(189, 221, 235, 0.6)', false);
-    });
-    */
-    game.debug.text(game.time.fps || '--', 2, 14, "#a7aebe");
-    // game.debug.text(Phaser.VERSION, 2, game.world.height - 2, "#ffff00");
-  },
-  clearMap: function(){
+    rS( 'render' ).start();
 
+    rS( 'render' ).end();
+    rS().update();
   },
-  drawMap: function(map, tiles){
-    //tiles in the layer
-    var i;
-    //layers in the map
-    var l = 0;
-    var tile;
-    //draw each layer, starting at 0
-    while (l < game.layerManager.layers.length){
-      //draw each tile in each layer
-      i = 0;
-      while (i < tiles[l].length){
-        var x = ((i % map.dimensions.units) * size);
-        var y = (Math.floor(i / map.dimensions.units) * size);
-        var z = game.layerManager.layers[l].z;
-        //add the tile
-        if (tiles[l][i] != 0){
-          tile = game.add.isoSprite(x, y, z, game.layerManager.layers[l].tileset, tiles[l][i], game.layerManager.layers[l].group);
-          tile.anchor.set(0.5, 1);
-          tile.smoothed = false;
-          tile.body.moves = false;
-
-          tile.scale.x = 1;
-          tile.scale.y = 1;
-        }
-        i++;
+  moveCamera: function(x, y){
+    //set the camera first
+    game.world.camera.setPosition(x,y);
+    //get the real world view coords of the cam
+    var isoCam = game.world.camera.view;
+    //make a rectangle out of them
+    //TODO: change resolution to consts
+    var viewport = {
+      left: isoCam.x,
+      right: isoCam.x + 1024,
+      top: isoCam.y,
+      bottom: isoCam.y + 768
+    };
+    //go through each chunk, and check to see if it's in frame or not
+    var i = 0;
+    while (i < game.worldManager.chunks.length){
+      if (intersectRect(game.worldManager.chunks[i], viewport) === true){
+        //do something
+        game.worldManager.chunks[i].group.visible = true;
+        //console.log("chunk : " + i + " is visible");
+      }else{
+        game.worldManager.chunks[i].group.visible = false;
+        //console.log("chunk : " + i + " is invisible");
       }
-      l++;
-      game.iso.simpleSort(game.layerManager.group);
+      i++;
+    }
+    //functions
+    function intersectRect(r1, r2) {
+      // console.log("intersect: (chunk / camera)");
+      // console.log("camera.left (" + r2.left + ") > chunk.right (" + r1.right + ") - [" + ((r2.left > r1.right)?"bad":"good") + "]");
+      // console.log("camera.right (" + r2.right + ") > chunk.left (" + r1.left + ") - [" + ((r2.right < r1.left)?"bad":"good") + "]");
+      // console.log("camera.top (" + r2.top + ") > chunk.bottom (" + r1.bottom + ") - [" + ((r2.top > r1.bottom)?"bad":"good") + "]");
+      // console.log("camera.bottom (" + r2.bottom + ") > chunk.top (" + r1.top + ") - [" + ((r2.bottom < r1.top)?"bad":"good") + "]");
+      return !(r2.left > r1.right ||
+               r2.right < r1.left ||
+               r2.top > r1.bottom ||
+               r2.bottom < r1.top);
     }
   }
 };

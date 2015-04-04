@@ -38,7 +38,7 @@ Roads.prototype = {
         tiles[game.generate.getIndexFromCoords(map, cornerX, cornerY + 1)] = game.tiles.highways.edge_caps.n;
         break;
       case "ne":
-        var cornerX = map.dimensions.units - 1;
+        var cornerX = map.units - 1;
         var cornerY = 2;
         //fix the corner roads
         tiles[game.generate.getIndexFromCoords(map, cornerX + 1, cornerY - 1)] = game.tiles.highways.open;
@@ -50,8 +50,8 @@ Roads.prototype = {
         tiles[game.generate.getIndexFromCoords(map, cornerX, cornerY + 1)] = game.tiles.highways.edge_caps.n;
         break;
       case "se":
-        var cornerX = map.dimensions.units - 1;
-        var cornerY = map.dimensions.units - 1;
+        var cornerX = map.units - 1;
+        var cornerY = map.units - 1;
         //fix the corner roads
         tiles[game.generate.getIndexFromCoords(map, cornerX + 1, cornerY + 1)] = game.tiles.highways.open;
         tiles[game.generate.getIndexFromCoords(map, cornerX, cornerY + 1)] = game.tiles.highways.straight.e[0];
@@ -63,7 +63,7 @@ Roads.prototype = {
         break;
       case "sw":
         var cornerX = 2;
-        var cornerY = map.dimensions.units - 1;
+        var cornerY = map.units - 1;
         //fix the corner roads
         tiles[game.generate.getIndexFromCoords(map, cornerX - 1, cornerY + 1)] = game.tiles.highways.open;
         tiles[game.generate.getIndexFromCoords(map, cornerX, cornerY + 1)] = game.tiles.highways.straight.w[0];
@@ -132,7 +132,7 @@ Roads.prototype = {
         set: set
       };
       //check to see if there's a road tile to the north
-      var n = (problems[i] - map.dimensions.units);
+      var n = (problems[i] - map.units);
       if (tiles[n] != 0){
         var nX = this.getDirections(tiles[n]);
         if (nX){
@@ -143,7 +143,7 @@ Roads.prototype = {
         }
       }
       //check to see if there's a road tile to the south
-      var s = (problems[i] + map.dimensions.units);
+      var s = (problems[i] + map.units);
       if (tiles[s] != 0){
         var sX = this.getDirections(tiles[s]);
         if (sX){
@@ -197,8 +197,8 @@ Roads.prototype = {
     var i = 0;
     while (i < tiles.length){
       if (masterTiles.indexOf(tiles[i]) != -1){
-        var n = i - map.dimensions.units;
-        var s = i + map.dimensions.units;
+        var n = i - map.units;
+        var s = i + map.units;
         //there's a match, this is a "master tile, let's check its friends
         if (masterTiles.indexOf(tiles[n]) === -1){
           //there's i don't recognize what's up there

@@ -3,7 +3,7 @@
 
 //global variables
 window.onload = function () {
-  var game = new Phaser.Game(1024, 768, Phaser.AUTO, 'isocitysim', null, true, false);
+  var game = new Phaser.Game(1024, 768, Phaser.AUTO, 'isocitysim', null, false, false);
   var Roads = require('./plugins/Roads');
   var Generate = require('./plugins/Generate');
   var WorldManager = require('./plugins/WorldManager');
@@ -70,20 +70,15 @@ Generate.prototype = {
     //start the looping for layers
     var l = 0;
     var rect, box;
-    //this is hardcoded for now, may change, may not, buildings start on 3
+    //this is hardcoded for now, may change, may not, buildings start on 2
     while (l < 4){
       switch (l){
         case 0:
-          //dirt, fill the entire chunk with dirt
-          rect = this.generateRect(map.units, map.units, 83);
-          tiles[l] = this.mergePartial2D(map, tiles[l], rect, 0);
-          break;
-        case 1:
           //grass on dirt
           rect = this.generateRect(map.units, map.units, 67);
           tiles[l] = this.mergePartial2D(map, tiles[l], rect, 0);
           break;
-        case 2:
+        case 1:
           //this spawns paved areas
           //14 because the highway takes up 3 on each edge, this will probably change
           rect = this.generateRect(CITY_CHUNK_SPACE, CITY_CHUNK_SPACE, 66);
@@ -121,7 +116,7 @@ Generate.prototype = {
           //road magic!
           tiles[l] = game.roads.fixRoads(map, tiles[l], "city_plain");
           break;
-        case 3:
+        case 2:
           //start to generate buildings
           var ewTiles = game.roads.getIndices(["e", "w"]);
           var nsTiles = game.roads.getIndices(["n", "s"]);
@@ -816,8 +811,8 @@ function WorldManager(gameObj) {
 WorldManager.prototype = {
   world: {
     layers: 10,
-    units: 15,
-    chunks: 2,
+    units: 20,
+    chunks: 4,
     tile_size: 74,
     tile_size_z: 32
   },
@@ -837,16 +832,12 @@ WorldManager.prototype = {
           layer.z = 0;
           break;
         case 1:
-          layer.tileset = "landscape";
-          layer.z = this.world.tile_size_z * 1;
+          layer.tileset = "city";
+          layer.z = 0;
           break;
         case 2:
-          layer.tileset = "city";
-          layer.z = this.world.tile_size_z * 1;
-          break;
-        case 3:
           layer.tileset = "building";
-          layer.z = this.world.tile_size_z * 1;
+          layer.z = 0;
           break;
         default:
           layer.tileset = "building";
@@ -872,11 +863,13 @@ WorldManager.prototype = {
     var chunk = {};
     chunk.x = (this.world.units * this.world.tile_size) * (c % this.world.chunks);
     chunk.y = (this.world.units * this.world.tile_size) * (Math.floor(c / this.world.chunks));
-    var group = game.add.group();
-    group.enableBody = true;
-    group.physicsBodyType = Phaser.Plugin.Isometric.ISOARCADE;
+    //set up cardinal directions for bounds checking
+    chunk.left = chunk.x;
+    chunk.right = chunk.left + (this.world.units * this.world.tile_size);
+    chunk.top = chunk.y;
+    chunk.bottom = chunk.top + (this.world.units * this.world.tile_size);
     return {
-      group: group,
+      group: game.add.group(),
       chunk: chunk,
       tiles: this.createTiles(tiles)
     };
@@ -907,6 +900,27 @@ WorldManager.prototype = {
       l++;
     }
   },
+  cleanWorld: function(){
+    var c = 0;
+    while (c < this.chunks.length){
+      this.cleanChunk(c);
+      c++;
+    }
+  },
+  cleanChunk: function(c){
+    var i = 0;
+    var arrLen = this.chunks[c].tiles[0].length;
+    while (i < arrLen){
+      if (this.chunks[c].tiles[2][i] != 0){
+        //the top most layer has tiles, everything under it is dead
+        this.chunks[c].tiles[1][i] = 0;
+        this.chunks[c].tiles[0][i] = 0
+      }else if (this.chunks[c].tiles[1][i] != 0){
+        this.chunks[c].tiles[0][i] = 0
+      }
+      i++;
+    }
+  },
   clearWorld: function(){
 
   },
@@ -915,13 +929,16 @@ WorldManager.prototype = {
   },
   drawWorld: function(){
     var c = 0;
+    var sprites = 0;
     while (c < this.chunks.length){
-      this.drawChunk(c);
+      sprites += this.drawChunk(c);
       c++;
     }
+    console.log("Finished drawing world: " + sprites + " drawn!");
   },
   drawChunk: function(c){
     //tiles in the layer
+    var totalSprites = 0;
     var i;
     //layers in the map
     var l = 0;
@@ -939,16 +956,35 @@ WorldManager.prototype = {
           tile = game.add.isoSprite(x, y, z, this.layers[l].tileset, this.chunks[c].tiles[l][i], this.chunks[c].group);
           tile.anchor.set(0.5, 1);
           tile.smoothed = false;
-          tile.body.moves = false;
-
           tile.scale.x = 1;
           tile.scale.y = 1;
+          //TODO: refactor me, i can probably be made to be faster
+          if (l == 0 || l == 1 || l == 2){
+            if (i == 0){
+              //set top of chunk
+              this.chunks[c].top = tile.y - this.world.tile_size;
+            }
+            else if (i == (this.world.units - 1)){
+              //set right of chunk
+              this.chunks[c].right = tile.x - (this.world.tile_size / 2);
+            }
+            else if (i == (this.world.units * (this.world.units - 1))){
+              //set left of chunk
+              this.chunks[c].left = tile.x + (this.world.tile_size / 2);
+            }
+            else if (i == (this.world.units * this.world.units) - 1){
+              //set bottom of chunk
+              this.chunks[c].bottom = tile.y;
+            }
+          }
+          totalSprites++;
         }
         i++;
       }
       l++;
       game.iso.simpleSort(this.chunks[c].group);
     }
+    return totalSprites;
   }
 };
 
@@ -960,20 +996,26 @@ module.exports = WorldManager;
 
 var game;
 var cursors;
+var rS;
+var wPx, hPx;
 
 function Boot() {
-
+  rS = new rStats( {
+    values: {
+        fps: { caption: 'Framerate (FPS)' },
+        update: { caption: 'Total update time (ms)' },
+        render: { caption: 'Total render time (ms)' }
+    }
+  } );
 }
 
 Boot.prototype = {
   preload: function() {
     game = this.game;
     //generate the world
-    var wPx = game.worldManager.world.chunks * (game.worldManager.world.units * 132);
-    var hPx = game.worldManager.world.chunks * (game.worldManager.world.units * 74);
+    wPx = game.worldManager.world.chunks * (game.worldManager.world.units * 132);
+    hPx = game.worldManager.world.chunks * (game.worldManager.world.units * 74);
     game.world.setBounds(0, 0, wPx, hPx);
-    game.camera.x = (wPx / 2) - (1024 / 2);
-    game.camera.y = (hPx / 2) - (768 / 2);
     //generate all the layers
     game.worldManager.createWorld(game.generate.generateMap(game.worldManager.world, 0));
     //build the chunk!
@@ -982,6 +1024,7 @@ Boot.prototype = {
       var tiles = game.worldManager.getAllTiles(c);
       tiles = game.generate.generateChunk(game.worldManager.world, tiles);
       game.worldManager.setAllTiles(c, tiles);
+      game.worldManager.cleanWorld();
       c++;
     }
 
@@ -989,39 +1032,82 @@ Boot.prototype = {
     game.time.advancedTiming = true;
     game.debug.renderShadow = false;
     game.stage.disableVisibilityChange = true;
+    game.stage.smoothed = false;
     //set up plugins and game
     game.plugins.add(new Phaser.Plugin.Isometric(game));
     game.physics.startSystem(Phaser.Plugin.Isometric.ISOARCADE);
-    game.iso.anchor.setTo(0.5, 0.2);
+    game.iso.anchor.setTo(0.5, 0.1);
   },
   create: function() {
     game.worldManager.drawWorld();
     cursors = game.input.keyboard.createCursorKeys();
+    this.moveCamera((wPx / 2) - (1024 / 2), (hPx / 2) - (768 / 2));
   },
   update: function () {
+    rS( 'FPS' ).frame();
+    rS( 'update' ).start();
+    //trigger the frame for anyone watching
+    rS().update();
     //this is how scaling is done, but this code is super rough
     //isoGroup.scale.setTo(2,2);
     if (cursors.right.isDown){
-      game.camera.x += 10;
+      this.moveCamera((game.world.camera.x + 10), game.world.camera.y);
     }
     if (cursors.left.isDown){
-      game.camera.x -= 10;
+      this.moveCamera((game.world.camera.x - 10), game.world.camera.y);
     }
     if (cursors.down.isDown){
-      game.camera.y += 10;
+      this.moveCamera(game.world.camera.x, (game.world.camera.y + 10));
     }
     if (cursors.up.isDown){
-      game.camera.y -= 10;
+      this.moveCamera(game.world.camera.x, (game.world.camera.y - 10));
     }
+    rS( 'update' ).end();
   },
   render: function () {
-    /*
-    isoGroup.forEach(function (tile) {
-        //game.debug.body(tile, 'rgba(189, 221, 235, 0.6)', false);
-    });
-    */
-    game.debug.text(game.time.fps || '--', 2, 14, "#a7aebe");
-    // game.debug.text(Phaser.VERSION, 2, game.world.height - 2, "#ffff00");
+    rS( 'render' ).start();
+
+    rS( 'render' ).end();
+    rS().update();
+  },
+  moveCamera: function(x, y){
+    //set the camera first
+    game.world.camera.setPosition(x,y);
+    //get the real world view coords of the cam
+    var isoCam = game.world.camera.view;
+    //make a rectangle out of them
+    //TODO: change resolution to consts
+    var viewport = {
+      left: isoCam.x,
+      right: isoCam.x + 1024,
+      top: isoCam.y,
+      bottom: isoCam.y + 768
+    };
+    //go through each chunk, and check to see if it's in frame or not
+    var i = 0;
+    while (i < game.worldManager.chunks.length){
+      if (intersectRect(game.worldManager.chunks[i], viewport) === true){
+        //do something
+        game.worldManager.chunks[i].group.visible = true;
+        //console.log("chunk : " + i + " is visible");
+      }else{
+        game.worldManager.chunks[i].group.visible = false;
+        //console.log("chunk : " + i + " is invisible");
+      }
+      i++;
+    }
+    //functions
+    function intersectRect(r1, r2) {
+      // console.log("intersect: (chunk / camera)");
+      // console.log("camera.left (" + r2.left + ") > chunk.right (" + r1.right + ") - [" + ((r2.left > r1.right)?"bad":"good") + "]");
+      // console.log("camera.right (" + r2.right + ") > chunk.left (" + r1.left + ") - [" + ((r2.right < r1.left)?"bad":"good") + "]");
+      // console.log("camera.top (" + r2.top + ") > chunk.bottom (" + r1.bottom + ") - [" + ((r2.top > r1.bottom)?"bad":"good") + "]");
+      // console.log("camera.bottom (" + r2.bottom + ") > chunk.top (" + r1.top + ") - [" + ((r2.bottom < r1.top)?"bad":"good") + "]");
+      return !(r2.left > r1.right ||
+               r2.right < r1.left ||
+               r2.top > r1.bottom ||
+               r2.bottom < r1.top);
+    }
   }
 };
 

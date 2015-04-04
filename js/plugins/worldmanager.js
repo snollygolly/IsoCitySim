@@ -11,8 +11,8 @@ function WorldManager(gameObj) {
 WorldManager.prototype = {
   world: {
     layers: 10,
-    units: 15,
-    chunks: 2,
+    units: 20,
+    chunks: 4,
     tile_size: 74,
     tile_size_z: 32
   },
@@ -32,16 +32,12 @@ WorldManager.prototype = {
           layer.z = 0;
           break;
         case 1:
-          layer.tileset = "landscape";
-          layer.z = this.world.tile_size_z * 1;
+          layer.tileset = "city";
+          layer.z = 0;
           break;
         case 2:
-          layer.tileset = "city";
-          layer.z = this.world.tile_size_z * 1;
-          break;
-        case 3:
           layer.tileset = "building";
-          layer.z = this.world.tile_size_z * 1;
+          layer.z = 0;
           break;
         default:
           layer.tileset = "building";
@@ -67,11 +63,13 @@ WorldManager.prototype = {
     var chunk = {};
     chunk.x = (this.world.units * this.world.tile_size) * (c % this.world.chunks);
     chunk.y = (this.world.units * this.world.tile_size) * (Math.floor(c / this.world.chunks));
-    var group = game.add.group();
-    group.enableBody = true;
-    group.physicsBodyType = Phaser.Plugin.Isometric.ISOARCADE;
+    //set up cardinal directions for bounds checking
+    chunk.left = chunk.x;
+    chunk.right = chunk.left + (this.world.units * this.world.tile_size);
+    chunk.top = chunk.y;
+    chunk.bottom = chunk.top + (this.world.units * this.world.tile_size);
     return {
-      group: group,
+      group: game.add.group(),
       chunk: chunk,
       tiles: this.createTiles(tiles)
     };
@@ -102,6 +100,27 @@ WorldManager.prototype = {
       l++;
     }
   },
+  cleanWorld: function(){
+    var c = 0;
+    while (c < this.chunks.length){
+      this.cleanChunk(c);
+      c++;
+    }
+  },
+  cleanChunk: function(c){
+    var i = 0;
+    var arrLen = this.chunks[c].tiles[0].length;
+    while (i < arrLen){
+      if (this.chunks[c].tiles[2][i] != 0){
+        //the top most layer has tiles, everything under it is dead
+        this.chunks[c].tiles[1][i] = 0;
+        this.chunks[c].tiles[0][i] = 0
+      }else if (this.chunks[c].tiles[1][i] != 0){
+        this.chunks[c].tiles[0][i] = 0
+      }
+      i++;
+    }
+  },
   clearWorld: function(){
 
   },
@@ -110,13 +129,16 @@ WorldManager.prototype = {
   },
   drawWorld: function(){
     var c = 0;
+    var sprites = 0;
     while (c < this.chunks.length){
-      this.drawChunk(c);
+      sprites += this.drawChunk(c);
       c++;
     }
+    console.log("Finished drawing world: " + sprites + " drawn!");
   },
   drawChunk: function(c){
     //tiles in the layer
+    var totalSprites = 0;
     var i;
     //layers in the map
     var l = 0;
@@ -134,16 +156,35 @@ WorldManager.prototype = {
           tile = game.add.isoSprite(x, y, z, this.layers[l].tileset, this.chunks[c].tiles[l][i], this.chunks[c].group);
           tile.anchor.set(0.5, 1);
           tile.smoothed = false;
-          tile.body.moves = false;
-
           tile.scale.x = 1;
           tile.scale.y = 1;
+          //TODO: refactor me, i can probably be made to be faster
+          if (l == 0 || l == 1 || l == 2){
+            if (i == 0){
+              //set top of chunk
+              this.chunks[c].top = tile.y - this.world.tile_size;
+            }
+            else if (i == (this.world.units - 1)){
+              //set right of chunk
+              this.chunks[c].right = tile.x - (this.world.tile_size / 2);
+            }
+            else if (i == (this.world.units * (this.world.units - 1))){
+              //set left of chunk
+              this.chunks[c].left = tile.x + (this.world.tile_size / 2);
+            }
+            else if (i == (this.world.units * this.world.units) - 1){
+              //set bottom of chunk
+              this.chunks[c].bottom = tile.y;
+            }
+          }
+          totalSprites++;
         }
         i++;
       }
       l++;
       game.iso.simpleSort(this.chunks[c].group);
     }
+    return totalSprites;
   }
 };
 

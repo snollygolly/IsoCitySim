@@ -962,15 +962,15 @@ WorldManager.prototype = {
           if (l == 0 || l == 1 || l == 2){
             if (i == 0){
               //set top of chunk
-              this.chunks[c].top = tile.y - this.world.tile_size;
+              this.chunks[c].top = tile.y - (this.world.tile_size * 1.5);
             }
             else if (i == (this.world.units - 1)){
               //set right of chunk
-              this.chunks[c].right = tile.x - (this.world.tile_size / 2);
+              this.chunks[c].right = tile.x + (this.world.tile_size);
             }
             else if (i == (this.world.units * (this.world.units - 1))){
               //set left of chunk
-              this.chunks[c].left = tile.x + (this.world.tile_size / 2);
+              this.chunks[c].left = tile.x - (this.world.tile_size);
             }
             else if (i == (this.world.units * this.world.units) - 1){
               //set bottom of chunk
@@ -998,6 +998,7 @@ var game;
 var cursors;
 var rS;
 var wPx, hPx;
+var velocity = 5;
 
 function Boot() {
   rS = new rStats( {
@@ -1044,6 +1045,7 @@ Boot.prototype = {
   create: function() {
     game.worldManager.drawWorld();
     cursors = game.input.keyboard.createCursorKeys();
+    game.world.camera.roundPx = false;
     this.moveCamera((wPx / 2) - (1024 / 2), (hPx / 2) - (768 / 2));
   },
   update: function () {
@@ -1054,16 +1056,16 @@ Boot.prototype = {
     //this is how scaling is done, but this code is super rough
     //isoGroup.scale.setTo(2,2);
     if (cursors.right.isDown){
-      this.moveCamera((game.world.camera.x + 10), game.world.camera.y);
+      this.moveCamera((game.world.camera.x + velocity), game.world.camera.y);
     }
     if (cursors.left.isDown){
-      this.moveCamera((game.world.camera.x - 10), game.world.camera.y);
+      this.moveCamera((game.world.camera.x - velocity), game.world.camera.y);
     }
     if (cursors.down.isDown){
-      this.moveCamera(game.world.camera.x, (game.world.camera.y + 10));
+      this.moveCamera(game.world.camera.x, (game.world.camera.y + velocity));
     }
     if (cursors.up.isDown){
-      this.moveCamera(game.world.camera.x, (game.world.camera.y - 10));
+      this.moveCamera(game.world.camera.x, (game.world.camera.y - velocity));
     }
     rS( 'update' ).end();
   },

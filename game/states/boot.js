@@ -5,6 +5,7 @@ var game;
 var cursors;
 var rS;
 var wPx, hPx;
+var velocity = 5;
 
 function Boot() {
   rS = new rStats( {
@@ -51,6 +52,7 @@ Boot.prototype = {
   create: function() {
     game.worldManager.drawWorld();
     cursors = game.input.keyboard.createCursorKeys();
+    game.world.camera.roundPx = false;
     this.moveCamera((wPx / 2) - (1024 / 2), (hPx / 2) - (768 / 2));
   },
   update: function () {
@@ -61,16 +63,16 @@ Boot.prototype = {
     //this is how scaling is done, but this code is super rough
     //isoGroup.scale.setTo(2,2);
     if (cursors.right.isDown){
-      this.moveCamera((game.world.camera.x + 10), game.world.camera.y);
+      this.moveCamera((game.world.camera.x + velocity), game.world.camera.y);
     }
     if (cursors.left.isDown){
-      this.moveCamera((game.world.camera.x - 10), game.world.camera.y);
+      this.moveCamera((game.world.camera.x - velocity), game.world.camera.y);
     }
     if (cursors.down.isDown){
-      this.moveCamera(game.world.camera.x, (game.world.camera.y + 10));
+      this.moveCamera(game.world.camera.x, (game.world.camera.y + velocity));
     }
     if (cursors.up.isDown){
-      this.moveCamera(game.world.camera.x, (game.world.camera.y - 10));
+      this.moveCamera(game.world.camera.x, (game.world.camera.y - velocity));
     }
     rS( 'update' ).end();
   },

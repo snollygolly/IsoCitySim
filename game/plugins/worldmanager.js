@@ -13,7 +13,7 @@ WorldManager.prototype = {
     layers: 10,
     units: 20,
     chunks: 4,
-    tile_size: 74,
+    tile_size: 70,
     tile_size_z: 32
   },
   layers: [

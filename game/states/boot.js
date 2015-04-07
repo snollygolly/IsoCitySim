@@ -44,6 +44,9 @@ Boot.prototype = {
     game.plugins.add(new Phaser.Plugin.Isometric(game));
     game.physics.startSystem(Phaser.Plugin.Isometric.ISOARCADE);
     game.iso.anchor.setTo(0.5, 0.1);
+    game.renderer.renderSession.roundPixels = true;
+    //this does nothing, default is .50
+    //game.iso.projectionAngle = Math.atan(100/200);
   },
   create: function() {
     game.worldManager.drawWorld();

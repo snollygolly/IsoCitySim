@@ -185,6 +185,7 @@ WorldManager.prototype = {
           if (l == 2){
             self.chunks[c].buildings[i] = [];
             tile.inputEnabled = true;
+            //mouse listeners
             tile.events.onInputOver.add(function(sprite, pointer){
               var s = 0;
               while (s < self.chunks[c].buildings[sprite.meta.index].length){
@@ -193,6 +194,20 @@ WorldManager.prototype = {
               }
             }, this);
             tile.events.onInputOut.add(function(sprite, pointer){
+              var s = 0;
+              while (s < self.chunks[c].buildings[sprite.meta.index].length){
+                self.chunks[c].buildings[sprite.meta.index][s].tint = 0xffffff;
+                s++;
+              }
+            }, this);
+            tile.events.onInputDown.add(function(sprite, pointer){
+              var s = 0;
+              while (s < self.chunks[c].buildings[sprite.meta.index].length){
+                self.chunks[c].buildings[sprite.meta.index][s].tint = 0xd85b5b;
+                s++;
+              }
+            }, this);
+            tile.events.onInputUp.add(function(sprite, pointer){
               var s = 0;
               while (s < self.chunks[c].buildings[sprite.meta.index].length){
                 self.chunks[c].buildings[sprite.meta.index][s].tint = 0xffffff;

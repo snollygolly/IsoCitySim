@@ -71,6 +71,7 @@ WorldManager.prototype = {
     return {
       group: game.add.group(),
       chunk: chunk,
+      buildings: [],
       tiles: this.createTiles(tiles)
     };
   },
@@ -143,6 +144,7 @@ WorldManager.prototype = {
     //layers in the map
     var l = 0;
     var tile;
+    var self = this;
     //draw each layer, starting at 0
     while (l < this.chunks[c].tiles.length){
       //draw each tile in each layer
@@ -154,6 +156,8 @@ WorldManager.prototype = {
         //add the tile
         if (this.chunks[c].tiles[l][i] != 0){
           tile = game.add.isoSprite(x, y, z, this.layers[l].tileset, this.chunks[c].tiles[l][i], this.chunks[c].group);
+          tile.meta = {};
+          tile.meta.index = i;
           tile.anchor.set(0.5, 1);
           tile.smoothed = false;
           tile.scale.x = 1;
@@ -176,6 +180,28 @@ WorldManager.prototype = {
               //set bottom of chunk
               this.chunks[c].bottom = tile.y;
             }
+          }
+          //buildings go here
+          if (l == 2){
+            self.chunks[c].buildings[i] = [];
+            tile.inputEnabled = true;
+            tile.events.onInputOver.add(function(sprite, pointer){
+              var s = 0;
+              while (s < self.chunks[c].buildings[sprite.meta.index].length){
+                self.chunks[c].buildings[sprite.meta.index][s].tint = 0x86bfda;
+                s++;
+              }
+            }, this);
+            tile.events.onInputOut.add(function(sprite, pointer){
+              var s = 0;
+              while (s < self.chunks[c].buildings[sprite.meta.index].length){
+                self.chunks[c].buildings[sprite.meta.index][s].tint = 0xffffff;
+                s++;
+              }
+            }, this);
+          }
+          if (l >= 2){
+            self.chunks[c].buildings[i].push(tile);
           }
           totalSprites++;
         }

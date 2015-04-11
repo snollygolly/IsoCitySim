@@ -51,9 +51,11 @@ Boot.prototype = {
   },
   create: function() {
     game.worldManager.drawWorld();
+    game.trafficManager.startTraffic();
     cursors = game.input.keyboard.createCursorKeys();
     game.world.camera.roundPx = false;
-    this.moveCamera((wPx / 2) - (1024 / 2), (hPx / 2) - (768 / 2));
+    //this.moveCamera((wPx / 2) - (1024 / 2), (hPx / 2) - (768 / 2));
+    this.moveCamera((wPx / 2) - (1024 / 2), 0);
   },
   update: function () {
     rS( 'FPS' ).frame();

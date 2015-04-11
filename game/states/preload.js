@@ -16,6 +16,7 @@ Preload.prototype = {
     this.load.atlasXML('landscape', 'assets/landscapeTiles_sheet.png', 'assets/landscapeTiles_sheet.xml');
     this.load.atlasXML('building', 'assets/buildingTiles_sheet.png', 'assets/buildingTiles_sheet.xml');
     this.load.atlasXML('city', 'assets/cityTiles_sheet.png', 'assets/cityTiles_sheet.xml');
+    this.load.atlasXML('vehicle_utility', 'assets/sheet_utility.png', 'assets/sheet_utility.xml');
 
   },
   create: function() {

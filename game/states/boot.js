@@ -76,6 +76,7 @@ Boot.prototype = {
     if (cursors.up.isDown){
       this.moveCamera(game.world.camera.x, (game.world.camera.y - velocity));
     }
+    game.worldManager.sortWorld();
     rS( 'update' ).end();
   },
   render: function () {

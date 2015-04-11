@@ -127,6 +127,18 @@ WorldManager.prototype = {
   clearChunk: function(e){
 
   },
+  sortWorld: function(){
+    var i = 0;
+    while (i < this.chunks.length){
+      this.sortChunk(i);
+      i++;
+    }
+  },
+  sortChunk: function(c){
+    if (this.chunks[c].group.visible === true){
+      game.iso.simpleSort(this.chunks[c].group);
+    }
+  },
   drawWorld: function(){
     var c = 0;
     var sprites = 0;

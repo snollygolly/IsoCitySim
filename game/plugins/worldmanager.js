@@ -137,6 +137,7 @@ WorldManager.prototype = {
   sortChunk: function(c){
     if (this.chunks[c].group.visible === true){
       game.iso.simpleSort(this.chunks[c].group);
+      //game.iso.topologicalSort(this.chunks[c].group);
     }
   },
   drawWorld: function(){

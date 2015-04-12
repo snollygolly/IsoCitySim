@@ -37,7 +37,6 @@ Boot.prototype = {
     }
 
     //other stuff?
-    game.time.advancedTiming = true;
     game.debug.renderShadow = false;
     game.stage.disableVisibilityChange = true;
     game.stage.smoothed = false;
@@ -76,7 +75,8 @@ Boot.prototype = {
     if (cursors.up.isDown){
       this.moveCamera(game.world.camera.x, (game.world.camera.y - velocity));
     }
-    game.worldManager.sortWorld();
+    //game.worldManager.sortWorld();
+    game.worldManager.sortChunk(0);
     rS( 'update' ).end();
   },
   render: function () {

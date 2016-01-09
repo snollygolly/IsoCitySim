@@ -1,3 +1,5 @@
+![IsoCitySim](https://cloud.githubusercontent.com/assets/4993074/12214387/a0745866-b657-11e5-8475-204f5e48c843.jpg)
+
 # IsoCitySim
 A simulation of a city using isometric tiles
 

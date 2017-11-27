@@ -3,7 +3,10 @@
 # IsoCitySim
 A simulation of a city using isometric tiles
 
-###How to use IsoCitySim for fun and for profit
+## Demo
+Be sure to check out the demo [here](http://snollygolly.github.io/IsoCitySim/)
+
+## How to use IsoCitySim for fun and for profit
 
 1. Clone down the repository and navigate to it
 

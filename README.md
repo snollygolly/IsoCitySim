@@ -4,7 +4,7 @@
 A simulation of a city using isometric tiles
 
 ## Demo
-Be sure to check out the demo [here](http://snollygolly.github.io/IsoCitySim/)
+Be sure to check out the demo [here](http://snollygolly.github.io/IsoCitySim/).  The demo shows off city/road/terrain generation, and it random each time.  You can use the arrow keys to navigate around.
 
 ## How to use IsoCitySim for fun and for profit
 
